@@ -1,17 +1,28 @@
 package Clases;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
     static Scanner scanner = new Scanner(System.in);
+    static double totalHorasActuales = 0;
+    static String matriculaActual = "";
+    static ArrayList<String> historialHoras = new ArrayList<>();
+
+
 
 
 
 
     public static void main(String[] args) {
-
+        login();
+        cargarHistorial();
+        guardarRegistro(2.00);
     }
+
+    // funciones de login y logica de este mismo, decidi separarlos en dos metodos para respetar las reglas del clean code (metodos que hagan solo 1 cosa ))
+
     public static boolean logicaLogin(String matricula, String contrasenia){
         try {
             InputStream is = Main.class.getClassLoader().getResourceAsStream("login.txt"); // input stream representa una corriente de datos de entrada, se usa el class loader para poder luego acceder a sus recursos, en estecaso el login.txt
@@ -27,7 +38,7 @@ public class Main {
                 }
             }
             lector.close();
-        } catch (IOException e) {
+        } catch (IOException e) { // en este caso el intellij me pedia añadir la execepcion
             System.out.println("Error al leer el archivo de usuarios.");
         }
         return false;
@@ -46,12 +57,71 @@ public class Main {
             System.out.println("Por favor ingresa tu contraseña");
             contraseña = scanner.nextLine();
         }
+        matriculaActual = nombre;
         System.out.println("Has iniciado sesión correctamente!");
 
 
 
 
     }
+
+
+
+    // metodos de horas
+
+    public static double verHorasTotales() {
+        return totalHorasActuales;
+    }
+
+    public static double calcularPago(double valorPorHora){
+        return totalHorasActuales * valorPorHora;
+    }
+
+    // metodos de carga d horas y fechas
+
+    public static void guardarRegistro(double horas){
+        try {
+            String fechaHoy = java.time.LocalDate.now().toString();
+            String linea = fechaHoy + "," + horas;
+
+            historialHoras.add(linea);
+
+            String nombreArchivo = "historial_" + matriculaActual + ".txt";
+            BufferedWriter escritor = new BufferedWriter(new FileWriter(nombreArchivo,true));
+            escritor.write(linea);
+            escritor.newLine();
+            escritor.close();
+        } catch (IOException e) {
+            System.out.println("Error al guardar");
+        }
+    }
+
+    public static void cargarHistorial() {
+        try {
+            String nombrearchivo = "historial_" + matriculaActual + ".txt";
+            BufferedReader lector = new BufferedReader(new FileReader(nombrearchivo));
+            String linea;
+            while ((linea = lector.readLine()) != null){
+                historialHoras.add(linea);
+
+                String[] partes = linea.split(",");
+                if (partes.length == 2) {
+                    double horas = Double.parseDouble(partes[1]);
+                    totalHorasActuales += horas;
+                }
+            }
+            lector.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("No existe historial para esta matricula");
+        } catch (IOException e) {
+            System.out.println("Error al cargar el historial");
+        }
+    }
+
+
+
+
+
 
 
 
