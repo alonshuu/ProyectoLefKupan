@@ -16,9 +16,7 @@ public class Main {
 
 
     public static void main(String[] args) {
-        login();
-        cargarHistorial();
-        guardarRegistro(2.00);
+        menu();
     }
 
     // funciones de login y logica de este mismo, decidi separarlos en dos metodos para respetar las reglas del clean code (metodos que hagan solo 1 cosa ))
@@ -76,6 +74,37 @@ public class Main {
     public static double calcularPago(double valorPorHora){
         return totalHorasActuales * valorPorHora;
     }
+    public static void registrarHoras(double horas){
+        if (horas > 0){
+            totalHorasActuales += horas;
+            System.out.println("Horas registradas de forma exitosa");
+            guardarRegistro(horas);
+        } else {
+            System.out.println("No se pueden registrar horas negativas o iguales a 0");
+        }
+    }
+
+    public static void mostrarResumen(double valorPorHora) {
+        System.out.println("=========================");
+        System.out.println("Resumen de tus horas");
+        System.out.println("Total de horas trabajadas: " + totalHorasActuales);
+        System.out.println("Pago total estimado: $" + calcularPago(valorPorHora));
+
+        System.out.println("\n Detalle de tus horas registradas a continuación:");
+
+        for (String registro : historialHoras) {
+            String[] partes = registro.split(",");
+            if (partes.length == 2){
+                System.out.println("- Fecha" + partes[0] + ", Horas: " + partes[1]);
+            }
+        }
+    }
+
+
+
+
+
+
 
     // metodos de carga d horas y fechas
 
@@ -117,6 +146,78 @@ public class Main {
             System.out.println("Error al cargar el historial");
         }
     }
+
+    // metodos de simplificacion para el menu
+
+    public static void registrarHorasUser() {
+        System.out.print("Ingrese las horas trabajadas: ");
+        double horas = scanner.nextDouble();
+        scanner.nextLine();
+        registrarHoras(horas);
+    }
+
+    public static void mostrarResumenUser() {
+        System.out.print("Ingrese el valor por hora: ");
+        double valor = scanner.nextDouble();
+        scanner.nextLine();
+        mostrarResumen(valor);
+    }
+
+
+
+
+    // metodos del menu
+
+    public static void printMenu(){
+        System.out.println("=========================");
+        System.out.println("Bienvenido al sistema de ayudantes de PAUU");
+        System.out.println("=========================");
+        System.out.println("Selecciona tu opción");
+        System.out.println("1. Registrar horas trabajadas");
+        System.out.println("2. Ver resumen de horas y pagos");
+        System.out.println("3. Salir");
+    }
+
+    public static int leerOpcionMenu() {
+        System.out.println("Elige una opcion");
+        int opcion = scanner.nextInt();
+        scanner.nextLine();
+        return opcion;
+    }
+
+    public static boolean ejecutarOpcion(int opcion) {
+        switch (opcion) {
+            case 1:
+                registrarHorasUser();
+                return false;
+            case 2:
+                mostrarResumenUser();
+                return false;
+            case 3:
+                System.out.println("Saliendo del programa...");
+                System.out.println("....");
+                System.out.println("..");
+                System.out.println(".");
+                return true;
+            default:
+                System.out.println("Opción no válida, intenta de nuevo.");
+                return false;
+        }
+    }
+    public static void menu(){
+        login();
+        boolean exit = false;
+        while(!exit){
+            printMenu();
+            int opcion = leerOpcionMenu();
+            exit = ejecutarOpcion(opcion);
+        }
+    }
+
+
+
+
+
 
 
 
