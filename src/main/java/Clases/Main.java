@@ -12,9 +12,6 @@ public class Main {
 
 
 
-
-
-
     public static void main(String[] args) {
         menu();
     }
@@ -166,7 +163,7 @@ public class Main {
 
 
 
-    // metodos del menu
+    // metodos del menu bastante orgulloso de como salieron
 
     public static void printMenu(){
         System.out.println("=========================");
