@@ -82,10 +82,13 @@ public class Main {
     }
 
     public static void mostrarResumen(double valorPorHora) {
-        System.out.println("=========================");
-        System.out.println("Resumen de tus horas");
+        System.out.println("==================================");
+        System.out.println("       RESUMEN DE HORAS           ");
+        System.out.println("==================================");
         System.out.println("Total de horas trabajadas: " + totalHorasActuales);
         System.out.println("Pago total estimado: $" + calcularPago(valorPorHora));
+
+        System.out.println("----------------------------------");
 
         System.out.println("\n Detalle de tus horas registradas a continuación:");
 
@@ -166,13 +169,14 @@ public class Main {
     // metodos del menu bastante orgulloso de como salieron
 
     public static void printMenu(){
-        System.out.println("=========================");
-        System.out.println("Bienvenido al sistema de ayudantes de PAUU");
-        System.out.println("=========================");
-        System.out.println("Selecciona tu opción");
-        System.out.println("1. Registrar horas trabajadas");
-        System.out.println("2. Ver resumen de horas y pagos");
-        System.out.println("3. Salir");
+        System.out.println("==================================");
+        System.out.println("| SISTEMA DE REGISTRO HORAS PAUU |");
+        System.out.println("==================================\n");
+        System.out.println("Por favor, selecciona una opción:");
+        System.out.println("[1] Registrar horas trabajadas");
+        System.out.println("[2] Ver resumen de horas y pagos");
+        System.out.println("[3] Salir");
+        System.out.println("\n===============================");
     }
 
     public static int leerOpcionMenu() {
@@ -203,6 +207,7 @@ public class Main {
     }
     public static void menu(){
         login();
+        cargarHistorial();
         boolean exit = false;
         while(!exit){
             printMenu();
@@ -210,23 +215,6 @@ public class Main {
             exit = ejecutarOpcion(opcion);
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }
