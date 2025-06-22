@@ -8,4 +8,23 @@ public class Ayudante {
     private String contrasena;
     private double horasTrabajadas;
     private List<Ayudantia> ayudantias;
+
+    public Ayudante(String matricula, String contrasena){
+        this.matricula = matricula;
+        this.contrasena = contrasena;
+        this.horasTrabajadas = 0;
+        this.ayudantias = new ArrayList<>();
+    }
+    public String getMatricula(){
+        return matricula;
+    }
+    public String getContrasena(){
+        return contrasena;
+    }
+    public double getHorasTrabajadas() {
+        return horasTrabajadas;
+    }
+    public List<Ayudantia> getAyudantias() {
+        return ayudantias;
+    }
 }
