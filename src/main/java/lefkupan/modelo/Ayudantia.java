@@ -12,6 +12,7 @@ public class Ayudantia{
         this.nombreRamo = nombreRamo;
         this.registrosHoras = new ArrayList<>();
     }
+
     public String getNombreRamo(){
         return nombreRamo;
     }

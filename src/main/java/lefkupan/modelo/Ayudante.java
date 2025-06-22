@@ -18,29 +18,36 @@ public class Ayudante {
     public String getMatricula(){
         return matricula;
     }
+
     public String getContrasena(){
         return contrasena;
     }
+
     public double getHorasTrabajadas() {
         return horasTrabajadas;
     }
+
     public List<Ayudantia> getAyudantias() {
         return ayudantias;
     }
+
     public void agregarAyudantia(Ayudantia ayudantia) {
         ayudantias.add(ayudantia);
     }
+
     public void registrarHoras(String ramo, double cantidad){
+        Ayudantia encontrada = null;
         for (Ayudantia ayudantia : ayudantias){
             if (ayudantia.getNombreRamo().equalsIgnoreCase(ramo)){
-                ayudantia.agregarHoras(cantidad);
-                horasTrabajadas += cantidad;
-                return;
+                encontrada = ayudantia;
+                break;
             }
         }
-        Ayudantia nueva = new Ayudantia(ramo);
-        nueva.agregarHoras(cantidad);
-        ayudantias.add(nueva);
+        if (encontrada == null) {
+            encontrada = new Ayudantia(ramo);
+            ayudantias.add(encontrada);
+        }
+        encontrada.agregarHoras(cantidad);
         horasTrabajadas += cantidad;
     }
     public double calcularPago(double valorPorHora) {
