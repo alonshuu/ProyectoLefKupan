@@ -11,7 +11,7 @@ public class RegistrosHoras{
         this.cantidad = cantidad;
     }
     public LocalDate getFecha() {
-        return cantidad;
+        return fecha;
     }
 
     public double getCantidad() {
