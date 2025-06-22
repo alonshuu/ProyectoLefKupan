@@ -36,4 +36,24 @@ public class Menu {
         int opcion = scanner.nextInt();;
         scanner.next();
         return opcion;
+   }
+   public void procesarOpcion(int opcion){
+        Runnable accion = acciones.get(opcion);
+        if (accion !=null){
+            accion.run();
+        } else {
+            System.out.println("Opción inválida. Intente nuevamente.");
+        }
+   }
+    public void iniciar(){
+        int opcion;
+        do {
+            mostrarOpciones();
+            opcion = leerOpcion();
+            procesarOpcion(opcion);
+        } while (opcion != 0);
+    }
+    private void registrarHoras() {
+
+    }
 }
