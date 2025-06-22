@@ -38,8 +38,9 @@ public class Ayudante {
 
     public void registrarHoras(String ramo, double cantidad){
         if (cantidad<=0) {
-            throw new IllegalArgumentException("Cantidad de horas invalidas");
+            return;
         }
+
         Ayudantia ayudantia = ayudantias.stream()
                 .filter(a -> a.getNombreRamo().equalsIgnoreCase(ramo))
                 .findFirst()

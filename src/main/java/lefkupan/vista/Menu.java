@@ -17,7 +17,7 @@ public class Menu {
     }
 
     public void mostrarMenuPrincipal() {
-        login(); // inicia sesión antes de mostrar el menú
+        login();
         HistorialTxt.cargarHistorial(ayudanteActual);
 
         boolean salir = false;
@@ -76,10 +76,10 @@ public class Menu {
             case 1 -> registrarHoras();
             case 2 -> mostrarResumen();
             case 3 -> {
-                System.out.println("¡Hasta luego!");
+                System.out.println("Chauuu");
                 return true;
             }
-            default -> System.out.println("Opción inválida. Intente de nuevo.");
+            default -> System.out.println("Opcion invalida. Intente de nuevo.");
         }
         return false;
     }
@@ -93,7 +93,7 @@ public class Menu {
         try {
             horas = Double.parseDouble(scanner.nextLine());
         } catch (NumberFormatException e) {
-            System.out.println("Entrada inválida. Debe ingresar un número.");
+            System.out.println("Debe ingresar un numero.");
             return;
         }
 
@@ -106,7 +106,7 @@ public class Menu {
         try {
             valor = Double.parseDouble(scanner.nextLine());
         } catch (NumberFormatException e) {
-            System.out.println("Entrada inválida.");
+            System.out.println("Entrada invalida.");
             return;
         }
 

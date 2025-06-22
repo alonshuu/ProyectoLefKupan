@@ -3,28 +3,11 @@ package lefkupan.controlador;
 import lefkupan.modelo.Ayudante;
 import lefkupan.modelo.HistorialTxt;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.time.LocalDate;
-
 public class ControladorHoras {
     private Ayudante ayudante;
 
     public ControladorHoras(Ayudante ayudante) {
         this.ayudante = ayudante;
-    }
-
-    public void guardarRegistroEnArchivo(String ramo, double horas){
-        String nombreArchivo = "historial_" + ayudante.getMatricula() + ".txt";
-        String linea = LocalDate.now() + "," + ramo + "," + horas;
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(nombreArchivo, true))) {
-            writer.write(linea);
-            writer.newLine();
-        } catch (IOException e) {
-            System.out.println("Error al guardar el archivo");
-        }
     }
 
     public void registrarHoras(String ramo, double cantidad) {

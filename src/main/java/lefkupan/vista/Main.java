@@ -1,6 +1,4 @@
-package lefkupan;
-
-import lefkupan.vista.Menu;
+package lefkupan.vista;
 
 public class Main {
     public static void main(String[] args) {
