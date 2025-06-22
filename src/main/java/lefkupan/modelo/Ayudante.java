@@ -38,5 +38,12 @@ public class Ayudante {
                 return;
             }
         }
+        Ayudantia nueva = new Ayudantia(ramo);
+        nueva.agregarHoras(cantidad);
+        ayudantias.add(nueva);
+        horasTrabajadas += cantidad;
+    }
+    public double calcularPago(double valorPorHora) {
+        return horasTrabajadas * valorPorHora;
     }
 }
