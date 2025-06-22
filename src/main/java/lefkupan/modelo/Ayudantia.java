@@ -22,4 +22,11 @@ public class Ayudantia{
         RegistroHoras registro = new RegistroHoras(LocalDate.now(), cantidad);
         registrosHoras.add(registro);
     }
+    public double getTotalHoras() {
+        double total = 0;
+        for (RegistroHoras rh : registrosHoras) {
+            total += rh.getCantidad();
+        }
+        return total;
+    }
 }
