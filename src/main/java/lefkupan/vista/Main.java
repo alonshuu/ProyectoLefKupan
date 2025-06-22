@@ -1,9 +1,8 @@
-package lefkupan;
+package lefkupan.vista;
 
 import lefkupan.controlador.ControladorHoras;
 import lefkupan.controlador.ControladorLogin;
 import lefkupan.modelo.Ayudante;
-import lefkupan.vista.Menu;
 
 import java.util.Scanner;
 

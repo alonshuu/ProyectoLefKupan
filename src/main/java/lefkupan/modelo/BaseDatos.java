@@ -26,6 +26,7 @@ public class BaseDatos {
                     for (String a : ayudantias) {
                         String[] partesAyudantia = a.split(":");
                         String ramo = partesAyudantia[0];
+                        Ayudantia ayudantia = new Ayudantia(ramo);
 
                         if (partesAyudantia.length == 2) {
                             String[] registros = partesAyudantia[1].split("\\|");
@@ -34,10 +35,14 @@ public class BaseDatos {
                                 if (datos.length == 2) {
                                     LocalDate fecha = LocalDate.parse(datos[0]);
                                     double cantidad = Double.parseDouble(datos[1]);
-                                    ayudante.registrarHoras(ramo, cantidad);
+                                    RegistroHoras rh = new RegistroHoras(fecha, cantidad);
+                                    ayudantia.getRegistrosHoras().add(rh);
+                                    ayudante.sumarHoras(cantidad);
                                 }
                             }
                         }
+
+                        ayudante.agregarAyudantia(ayudantia);
                     }
                 }
 

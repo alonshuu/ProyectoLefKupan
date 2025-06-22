@@ -46,4 +46,19 @@ public class Ayudante {
     public double calcularPago(double valorPorHora) {
         return horasTrabajadas * valorPorHora;
     }
+    public boolean eliminarAyudantia(String nombreRamo) {
+        for (Ayudantia ayudantia : ayudantias) {
+            if (ayudantia.getNombreRamo().equalsIgnoreCase(nombreRamo)) {
+                horasTrabajadas -= ayudantia.getTotalHoras();
+                ayudantias.remove(ayudantia);
+                return true;
+            }
+        }
+        return false;
+    }
+    public void sumarHoras(double cantidad) {
+        this.horasTrabajadas += cantidad;
+    }
+
+
 }

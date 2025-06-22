@@ -2,6 +2,8 @@ package lefkupan.vista;
 
 import lefkupan.controlador.ControladorHoras;
 import lefkupan.modelo.Ayudante;
+import lefkupan.modelo.Ayudantia;
+import lefkupan.modelo.RegistroHoras;
 
 import java.util.*;
 
@@ -17,6 +19,9 @@ public class Menu {
 
         acciones.put(1, this::registrarHoras);
         acciones.put(2, this::verPagoEstimado);
+        acciones.put(3, this::eliminarAyudantia);
+        acciones.put(4, this::verAyudantias);
+        acciones.put(5, this::verHistorialPorAyudantia);
         acciones.put(0, this::salir);
     }
     public void mostrarOpciones(){
@@ -25,6 +30,9 @@ public class Menu {
         System.out.println("------------------");
         System.out.println("1. Registrar horas trabajadas");
         System.out.println("2. Ver pago estimado");
+        System.out.println("3. Eliminar ayudantía");
+        System.out.println("4. Ver ayudantías registradas");
+        System.out.println("5. Ver historial detallado por ayudantía");
         System.out.println("0. Salir");
     }
     public int leerOpcion() {
@@ -34,7 +42,7 @@ public class Menu {
             scanner.next();
     }
         int opcion = scanner.nextInt();
-        scanner.next();
+        scanner.nextLine();
         return opcion;
    }
    public void procesarOpcion(int opcion){
@@ -72,4 +80,51 @@ public class Menu {
     private void salir() {
         System.out.println("Saliendo del sistema...");
     }
+    private void eliminarAyudantia() {
+        System.out.print("Ingrese el nombre del ramo que desea eliminar: ");
+        String ramo = scanner.nextLine().trim();
+
+        boolean eliminado = ayudante.eliminarAyudantia(ramo);
+
+        if (eliminado) {
+            controladorHoras.registrarHoras(ayudante, "", 0);
+            System.out.println("Ayudantía eliminada correctamente.");
+        } else {
+            System.out.println("No se encontró una ayudantía con ese nombre.");
+        }
+    }
+    private void verAyudantias() {
+        List<Ayudantia> lista = ayudante.getAyudantias();
+
+        if (lista.isEmpty()) {
+            System.out.println("No tienes ayudantías registradas.");
+            return;
+        }
+
+        System.out.println("Tus ayudantías registradas:");
+        for (Ayudantia a : lista) {
+            System.out.println("- " + a.getNombreRamo() + " (Total horas: " + a.getTotalHoras() + ")");
+        }
+    }
+    private void verHistorialPorAyudantia() {
+        List<Ayudantia> lista = ayudante.getAyudantias();
+        if (lista.isEmpty()) {
+            System.out.println("No tienes ayudantías registradas.");
+            return;
+        }
+
+        for (Ayudantia a : lista) {
+            System.out.println("Ramo: " + a.getNombreRamo());
+            List<RegistroHoras> registros = a.getRegistrosHoras();
+            if (registros.isEmpty()) {
+                System.out.println("  Sin registros.");
+            } else {
+                for (RegistroHoras rh : registros) {
+                    System.out.println("  Fecha: " + rh.getFecha() + " - Horas: " + rh.getCantidad());
+                }
+            }
+            System.out.println("----------------------------------");
+        }
+    }
+
 }
