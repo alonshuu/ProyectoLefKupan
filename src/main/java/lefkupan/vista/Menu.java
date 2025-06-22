@@ -33,7 +33,7 @@ public class Menu {
             System.out.println("Por favor ingrese un número válido.");
             scanner.next();
     }
-        int opcion = scanner.nextInt();;
+        int opcion = scanner.nextInt();
         scanner.next();
         return opcion;
    }
@@ -54,6 +54,22 @@ public class Menu {
         } while (opcion != 0);
     }
     private void registrarHoras() {
-
+        System.out.print("Ingrese nombre del ramo: ");
+        String ramo = scanner.nextLine();
+        System.out.print("Ingrese cantidad de horas: ");
+        double horas = scanner.nextDouble();
+        scanner.nextLine();
+        controladorHoras.registrarHoras(ayudante, ramo, horas);
+        System.out.println("Horas registradas correctamente.");
+    }
+    private void verPagoEstimado() {
+        System.out.print("Ingrese valor por hora: ");
+        double valor = scanner.nextDouble();
+        scanner.nextLine();
+        double total = controladorHoras.calcularPago(ayudante, valor);
+        System.out.println("Pago estimado: $" + total);
+    }
+    private void salir() {
+        System.out.println("Saliendo del sistema...");
     }
 }
