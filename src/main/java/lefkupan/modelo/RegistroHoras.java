@@ -8,7 +8,7 @@ public class RegistroHoras {
 
     public RegistroHoras(LocalDate fecha, double cantidad) {
         if (cantidad <= 0) {
-            throw new IllegalArgumentException("La cantidad debe ser mayor a 0");
+            throw new IllegalArgumentException("Horas invalidas");
         }
         this.fecha = fecha;
         this.cantidad = cantidad;

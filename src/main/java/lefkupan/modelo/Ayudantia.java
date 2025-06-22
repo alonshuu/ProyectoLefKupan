@@ -22,16 +22,18 @@ public class Ayudantia{
     }
 
     public void agregarHoras(double cantidad){
-        RegistroHoras registro = new RegistroHoras(LocalDate.now(), cantidad);if(cantidad<=0) {
+        if (cantidad <= 0){
+            throw new IllegalArgumentException("Horas invalidas");
         }
+        RegistroHoras registro = new RegistroHoras(LocalDate.now(), cantidad);
         registrosHoras.add(registro);
     }
-
     public double getTotalHoras() {
-        double total = 0;
-        for (RegistroHoras rh : registrosHoras) {
-            total += rh.getCantidad();
-        }
-        return total;
+        return registrosHoras.stream().mapToDouble(RegistroHoras::getCantidad).sum();
+    }
+
+    @Override
+    public String toString(){
+        return nombreRamo + " : " + getTotalHoras() + " hrs";
     }
 }
