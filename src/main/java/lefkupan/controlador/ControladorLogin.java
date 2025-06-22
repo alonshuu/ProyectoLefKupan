@@ -1,4 +1,4 @@
 package lefkupan.controlador;
 
-public class LoginController {
+public class ControladorLogin {
 }

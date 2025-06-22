@@ -20,7 +20,7 @@ public class Main {
 
     public static boolean logicaLogin(String matricula, String contrasenia){
         try {
-            InputStream is = Main.class.getClassLoader().getResourceAsStream("login.txt"); // input stream representa una corriente de datos de entrada, se usa el class loader para poder luego acceder a sus recursos, en estecaso el login.txt
+            InputStream is = Main.class.getClassLoader().getResourceAsStream("usuarios.txt"); // input stream representa una corriente de datos de entrada, se usa el class loader para poder luego acceder a sus recursos, en estecaso el usuarios.txt
             BufferedReader lector = new BufferedReader(new InputStreamReader(is));
             String linea;
             while ((linea = lector.readLine()) != null ){
