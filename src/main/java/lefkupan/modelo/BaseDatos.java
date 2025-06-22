@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BaseDatos {
+
     private static final String ARCHIVO = "src/main/resources/usuarios.txt";
 
     public static List<Ayudante> cargarAyudantes() {
@@ -14,11 +15,13 @@ public class BaseDatos {
         try (BufferedReader lector = new BufferedReader(new FileReader(ARCHIVO))) {
             String linea;
             while ((linea = lector.readLine()) != null) {
+                String[] partes = linea.split(",", 3);
                 String matricula = partes[0];
                 String contrasena = partes[1];
 
                 Ayudante ayudante = new Ayudante(matricula, contrasena);
-                if (partes.length == 3){
+
+                if (partes.length == 3) {
                     String[] ayudantias = partes[2].split(";");
                     for (String a : ayudantias) {
                         String[] partesAyudantia = a.split(":");
@@ -38,11 +41,47 @@ public class BaseDatos {
                                 }
                             }
                         }
+
                         ayudante.agregarAyudantia(ayudantia);
                     }
                 }
-                ayudante.add(ayudante);
+
+                ayudantes.add(ayudante);
             }
+        } catch (IOException e) {
+            System.out.println("No se pudo leer usuarios.txt. Se cargará una lista vacía.");
+        }
+
+        return ayudantes;
+    }
+
+    public static void guardarAyudantes(List<Ayudante> ayudantes) {
+        try (BufferedWriter escritor = new BufferedWriter(new FileWriter(ARCHIVO))) {
+            for (Ayudante a : ayudantes) {
+                StringBuilder sb = new StringBuilder();
+                sb.append(a.getMatricula()).append(",").append(a.getContrasena());
+
+                if (!a.getAyudantias().isEmpty()) {
+                    sb.append(",");
+                    List<String> ayudantiaStrings = new ArrayList<>();
+                    for (Ayudantia ay : a.getAyudantias()) {
+                        List<String> registros = new ArrayList<>();
+                        for (RegistroHoras rh : ay.getRegistrosHoras()) {
+                            registros.add(rh.getFecha().toString() + "-" + rh.getCantidad());
+                        }
+                        String linea = ay.getNombreRamo() + ":" + String.join("|", registros);
+                        ayudantiaStrings.add(linea);
+                    }
+                    sb.append(String.join(";", ayudantiaStrings));
+                }
+
+                escritor.write(sb.toString());
+                escritor.newLine();
+            }
+
+            System.out.println("Usuarios guardados correctamente.");
+        } catch (IOException e) {
+            System.out.println("Error al guardar usuarios.txt.");
         }
     }
 }
