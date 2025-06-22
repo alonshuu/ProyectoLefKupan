@@ -1,4 +1,6 @@
 package lefkupan.modelo;
 
-public class BaseDatos {
+public interface BaseDatos {
+    void guardarAyudante(Ayudante ayudante);
+    Ayudante obtenerAyudante(String matricula);
 }
