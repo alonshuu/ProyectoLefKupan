@@ -16,13 +16,19 @@ public class Ayudantia{
     public String getNombreRamo(){
         return nombreRamo;
     }
+
     public List<RegistroHoras> getRegistrosHoras(){
         return registrosHoras;
     }
+
     public void agregarHoras(double cantidad){
         RegistroHoras registro = new RegistroHoras(LocalDate.now(), cantidad);
+        if(cantidad<=0){
+            throw new IllegalArgumentException("Horas invalidas");
+        }
         registrosHoras.add(registro);
     }
+
     public double getTotalHoras() {
         double total = 0;
         for (RegistroHoras rh : registrosHoras) {
