@@ -19,5 +19,21 @@ public class Menu {
         acciones.put(2, this::verPagoEstimado);
         acciones.put(0, this::salir);
     }
-    public void
+    public void mostrarOpciones(){
+        System.out.println("------------------");
+        System.out.println("       MENÚ       ");
+        System.out.println("------------------");
+        System.out.println("1. Registrar horas trabajadas");
+        System.out.println("2. Ver pago estimado");
+        System.out.println("0. Salir");
+    }
+    public int leerOpcion() {
+        System.out.print("Seleccione una opción: ");
+        while (!scanner.hasNextInt()) {
+            System.out.println("Por favor ingrese un número válido.");
+            scanner.next();
+    }
+        int opcion = scanner.nextInt();;
+        scanner.next();
+        return opcion;
 }
