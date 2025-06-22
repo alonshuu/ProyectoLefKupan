@@ -22,9 +22,7 @@ public class Ayudantia{
     }
 
     public void agregarHoras(double cantidad){
-        RegistroHoras registro = new RegistroHoras(LocalDate.now(), cantidad);
-        if(cantidad<=0){
-            throw new IllegalArgumentException("Horas invalidas");
+        RegistroHoras registro = new RegistroHoras(LocalDate.now(), cantidad);if(cantidad<=0) {
         }
         registrosHoras.add(registro);
     }
