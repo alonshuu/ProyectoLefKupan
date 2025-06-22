@@ -14,4 +14,7 @@ public class ControladorHoras {
         ayudante.registrarHoras(ramo, cantidad);
         BaseDatos.guardarAyudantes(listaAyudantes);
     }
+    public double calcularPago(Ayudante ayudante, double valorHora) {
+        return ayudante.calcularPago(valorHora);
+    }
 }
