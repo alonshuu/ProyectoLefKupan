@@ -26,7 +26,6 @@ public class BaseDatos {
                     for (String a : ayudantias) {
                         String[] partesAyudantia = a.split(":");
                         String ramo = partesAyudantia[0];
-                        Ayudantia ayudantia = new Ayudantia(ramo);
 
                         if (partesAyudantia.length == 2) {
                             String[] registros = partesAyudantia[1].split("\\|");
@@ -35,21 +34,17 @@ public class BaseDatos {
                                 if (datos.length == 2) {
                                     LocalDate fecha = LocalDate.parse(datos[0]);
                                     double cantidad = Double.parseDouble(datos[1]);
-                                    RegistroHoras rh = new RegistroHoras(fecha, cantidad);
-                                    ayudantia.getRegistrosHoras().add(rh);
                                     ayudante.registrarHoras(ramo, cantidad);
                                 }
                             }
                         }
-
-                        ayudante.agregarAyudantia(ayudantia);
                     }
                 }
 
                 ayudantes.add(ayudante);
             }
         } catch (IOException e) {
-            System.out.println("No se pudo leer usuarios.txt. Se cargará una lista vacía.");
+            System.out.println("No se pudo cargar la información. Asegúrate de tener usuarios registrados.");
         }
 
         return ayudantes;
