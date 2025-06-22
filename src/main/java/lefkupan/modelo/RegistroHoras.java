@@ -23,6 +23,6 @@ public class RegistroHoras {
     }
     @Override
     public String toString() {
-        return fecha + " : " + cantidad + "hrs";
+        return fecha + ": " + cantidad + " hrs";
     }
 }

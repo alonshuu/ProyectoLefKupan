@@ -15,6 +15,7 @@ public class Ayudante {
         this.horasTrabajadas = 0;
         this.ayudantias = new ArrayList<>();
     }
+
     public String getMatricula(){
         return matricula;
     }
@@ -36,21 +37,29 @@ public class Ayudante {
     }
 
     public void registrarHoras(String ramo, double cantidad){
-        Ayudantia encontrada = null;
-        for (Ayudantia ayudantia : ayudantias){
-            if (ayudantia.getNombreRamo().equalsIgnoreCase(ramo)){
-                encontrada = ayudantia;
-                break;
-            }
+        if (cantidad<=0) {
+            throw new IllegalArgumentException("Cantidad de horas invalidas");
         }
-        if (encontrada == null) {
-            encontrada = new Ayudantia(ramo);
-            ayudantias.add(encontrada);
+        Ayudantia ayudantia = ayudantias.stream()
+                .filter(a -> a.getNombreRamo().equalsIgnoreCase(ramo))
+                .findFirst()
+                .orElse(null);
+
+        if (ayudantia == null) {
+            ayudantia = new Ayudantia(ramo);
+            ayudantias.add(ayudantia);
         }
-        encontrada.agregarHoras(cantidad);
+
+        ayudantia.agregarHoras(cantidad);
         horasTrabajadas += cantidad;
     }
+
     public double calcularPago(double valorPorHora) {
         return horasTrabajadas * valorPorHora;
+    }
+
+    @Override
+    public String toString(){
+        return "Ayudante{"+ "matricula= " + matricula + ", horas= " + horasTrabajadas + "}";
     }
 }
