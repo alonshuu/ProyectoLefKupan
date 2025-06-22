@@ -15,7 +15,33 @@ public class BaseDatos {
             String linea;
             while ((linea = lector.readLine()) != null) {
                 String matricula = partes[0];
+                String contrasena = partes[1];
 
+                Ayudante ayudante = new Ayudante(matricula, contrasena);
+                if (partes.length == 3){
+                    String[] ayudantias = partes[2].split(";");
+                    for (String a : ayudantias) {
+                        String[] partesAyudantia = a.split(":");
+                        String ramo = partesAyudantia[0];
+                        Ayudantia ayudantia = new Ayudantia(ramo);
+
+                        if (partesAyudantia.length == 2) {
+                            String[] registros = partesAyudantia[1].split("\\|");
+                            for (String r : registros) {
+                                String[] datos = r.split("-");
+                                if (datos.length == 2) {
+                                    LocalDate fecha = LocalDate.parse(datos[0]);
+                                    double cantidad = Double.parseDouble(datos[1]);
+                                    RegistroHoras rh = new RegistroHoras(fecha, cantidad);
+                                    ayudantia.getRegistrosHoras().add(rh);
+                                    ayudante.registrarHoras(ramo, cantidad);
+                                }
+                            }
+                        }
+                        ayudante.agregarAyudantia(ayudantia);
+                    }
+                }
+                ayudante.add(ayudante);
             }
         }
     }
