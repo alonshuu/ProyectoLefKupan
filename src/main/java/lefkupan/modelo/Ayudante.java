@@ -27,4 +27,16 @@ public class Ayudante {
     public List<Ayudantia> getAyudantias() {
         return ayudantias;
     }
+    public void agregarAyudantia(Ayudantia ayudantia) {
+        ayudantias.add(ayudantia);
+    }
+    public void registrarHoras(String ramo, double cantidad){
+        for (Ayudantia ayudantia : ayudantias){
+            if (ayudantia.getNombreRamo().equalsIgnoreCase(ramo)){
+                ayudantia.agregarHoras(cantidad);
+                horasTrabajadas += cantidad;
+                return;
+            }
+        }
+    }
 }
