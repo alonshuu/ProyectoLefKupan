@@ -1,4 +1,4 @@
-package Clases;
+package lefkupan;
 
 import junit.framework.TestCase;
 import org.junit.jupiter.api.BeforeEach;
