@@ -58,7 +58,8 @@ public class Menu {
         System.out.println("1. Registrar horas trabajadas");
         System.out.println("2. Ver resumen de horas y pago");
         System.out.println("3. Eliminar ayudantia");
-        System.out.println("4. Salir");
+        System.out.println("4. Eliminar un registro especifico (fecha y ramo): ");
+        System.out.println("5. Salir");
         System.out.print("Selecciona una opcion: ");
     }
 
@@ -86,7 +87,11 @@ public class Menu {
                 eliminarAyudantia();
                 break;
 
-            case 4: {
+            case 4:
+                eliminarRegistroEspecifico();
+                break;
+
+            case 5: {
                 System.out.println("Adios");
                 return true;
             }
@@ -139,7 +144,7 @@ public class Menu {
             double valor;
             try {
                 valor = Double.parseDouble(scanner.nextLine());
-            }catch (NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 System.out.println("Entrada invalida");
                 valor = 0;
             }
@@ -148,5 +153,52 @@ public class Menu {
             System.out.println("No se encontro la ayudantia");
         }
     }
-}
 
+    private void eliminarRegistroEspecifico() {
+        System.out.print("Ingrese el nombre del ramo: ");
+        String ramo = scanner.nextLine();
+
+        var ayudantia = ayudanteActual.getAyudantias().stream()
+                .filter(a -> a.getNombreRamo().equalsIgnoreCase(ramo))
+                .findFirst()
+                .orElse(null);
+
+        if (ayudantia == null) {
+            System.out.println("No se encontro ayudantia");
+            return;
+        }
+
+        var registros = ayudantia.getRegistrosHoras();
+        if (registros.isEmpty()) {
+            System.out.println("No hay registros");
+            return;
+        }
+
+        System.out.println("Registros disponibles: ");
+        for (int i = 0; i < registros.size(); i++) {
+            System.out.println("[" + (i + 1) + "] " + registros.get(i));
+        }
+
+        System.out.print("Ingrese el numero del registro que desea eliminar: ");
+        int seleccion;
+        try {
+            seleccion = Integer.parseInt(scanner.nextLine()) - 1;
+        } catch (NumberFormatException e) {
+            System.out.println("Entrada invalida.");
+            return;
+        }
+
+        if (seleccion < 0 || seleccion >= registros.size()) {
+            System.out.println("Error");
+            return;
+        }
+
+        var registroEliminado = registros.remove(seleccion);
+        ayudanteActual.recalcularHorasTotales();
+
+        HistorialTxt.eliminarRegistroDelArchivo(ayudanteActual, ramo, registroEliminado);
+
+        System.out.println("Ayudantia eliminada");
+
+    }
+}

@@ -62,7 +62,7 @@ public class HistorialTxt {
         File archivo = new File(nombreArchivo);
 
         if (!archivo.exists()) {
-            System.out.println("No existe historial para esta matricula.");
+            System.out.println("No existe historial para esta matricula");
             return;
         }
 
@@ -91,4 +91,42 @@ public class HistorialTxt {
             System.out.println("No se pudo eliminar el archivo original.");
         }
     }
+
+    public static void eliminarRegistroDelArchivo(Ayudante ayudante, String ramo, RegistroHoras registro) {
+        String nombreArchivo = "historial_" + ayudante.getMatricula() + ".txt";
+        File archivo = new File(nombreArchivo);
+        File temp = new File(nombreArchivo + ".tmp");
+
+        try (
+                BufferedReader lector = new BufferedReader(new FileReader(archivo));
+                BufferedWriter escritor = new BufferedWriter(new FileWriter(temp))
+        ) {
+            String linea;
+            boolean eliminado = false;
+
+            while ((linea = lector.readLine()) != null) {
+                String[] partes = linea.split(",");
+                if (partes.length == 3 &&
+                        partes[0].equals(registro.getFecha().toString()) &&
+                        partes[1].equalsIgnoreCase(ramo) &&
+                        Double.parseDouble(partes[2]) == registro.getCantidad() &&
+                        !eliminado) {
+                    eliminado = true;
+                    continue;
+                }
+                escritor.write(linea);
+                escritor.newLine();
+            }
+        } catch (IOException e) {
+            System.out.println("Error al eliminar registro del archivo");
+            return;
+        }
+
+        if (archivo.delete()) {
+            temp.renameTo(archivo);
+        } else {
+            System.out.println("No se pudo sobrescribir el archivo original");
+        }
+    }
+
 }
