@@ -56,4 +56,39 @@ public class HistorialTxt {
             System.out.println("Error al guardar historial: " + e.getMessage());
         }
     }
+
+    public static void eliminarAyudantiaDelArchivo(Ayudante ayudante, String ramo) {
+        String nombreArchivo = "historial_" + ayudante.getMatricula() + ".txt";
+        File archivo = new File(nombreArchivo);
+
+        if (!archivo.exists()) {
+            System.out.println("No existe historial para esta matricula.");
+            return;
+        }
+
+        File archivoTemporal = new File(nombreArchivo + ".tmp");
+
+        try (
+            BufferedReader lector = new BufferedReader(new FileReader(archivo));
+            BufferedWriter escritor = new BufferedWriter(new FileWriter(archivoTemporal))
+        ) {
+            String linea;
+            while ((linea = lector.readLine()) != null) {
+                String[] partes = linea.split(",");
+                if (partes.length == 3 && !partes[1].equalsIgnoreCase(ramo)) {
+                    escritor.write(linea);
+                    escritor.newLine();
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error al modificar historial: " + e.getMessage());
+            return;
+        }
+
+        if (archivo.delete()) {
+            archivoTemporal.renameTo(archivo);
+        } else {
+            System.out.println("No se pudo eliminar el archivo original.");
+        }
+    }
 }

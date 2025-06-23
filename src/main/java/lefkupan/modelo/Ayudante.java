@@ -59,6 +59,20 @@ public class Ayudante {
         return horasTrabajadas * valorPorHora;
     }
 
+    public boolean eliminarAyudantia(String nombreRamo) {
+        Ayudantia encontrada = ayudantias.stream()
+                .filter(a -> a.getNombreRamo().equalsIgnoreCase(nombreRamo))
+                .findFirst()
+                .orElse(null);
+
+        if (encontrada != null) {
+            horasTrabajadas -= encontrada.getTotalHoras();
+            ayudantias.remove(encontrada);
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public String toString(){
         return "Ayudante{"+ "matricula= " + matricula + ", horas= " + horasTrabajadas + "}";

@@ -32,7 +32,7 @@ public class Menu {
         System.out.println("=== LOGIN DE AYUDANTE ===");
 
         while (true) {
-            System.out.print("Ingrese matrícula: ");
+            System.out.print("Ingrese matricula: ");
             String matricula = scanner.nextLine();
 
             System.out.print("Ingrese contraseña: ");
@@ -41,12 +41,12 @@ public class Menu {
             Ayudante ayudante = ControladorLogin.autenticar(matricula, contrasena);
 
             if (ayudante != null) {
-                System.out.println("¡Inicio de sesión exitoso!");
+                System.out.println("Inicio de sesión exitoso!");
                 ayudanteActual = ayudante;
                 controladorHoras = new ControladorHoras(ayudante);
                 break;
             } else {
-                System.out.println("Credenciales inválidas. Intente de nuevo.");
+                System.out.println("Error. Intente de nuevo");
             }
         }
     }
@@ -57,8 +57,9 @@ public class Menu {
         System.out.println("===============================");
         System.out.println("1. Registrar horas trabajadas");
         System.out.println("2. Ver resumen de horas y pago");
-        System.out.println("3. Salir");
-        System.out.print("Seleccione una opción: ");
+        System.out.println("3. Eliminar ayudantia");
+        System.out.println("4. Salir");
+        System.out.print("Selecciona una opcion: ");
     }
 
     private int leerOpcion() {
@@ -73,13 +74,24 @@ public class Menu {
 
     private boolean ejecutarOpcion(int opcion) {
         switch (opcion) {
-            case 1 -> registrarHoras();
-            case 2 -> mostrarResumen();
-            case 3 -> {
-                System.out.println("Chauuu");
+            case 1:
+                registrarHoras();
+                break;
+
+            case 2:
+                mostrarResumen();
+                break;
+
+            case 3:
+                eliminarAyudantia();
+                break;
+
+            case 4: {
+                System.out.println("Adios");
                 return true;
             }
-            default -> System.out.println("Opcion invalida. Intente de nuevo.");
+            default:
+                System.out.println("Opcion invalida. Intente de nuevo.");
         }
         return false;
     }
@@ -111,6 +123,18 @@ public class Menu {
         }
 
         controladorHoras.mostrarResumen(valor);
+    }
+
+    private void eliminarAyudantia() {
+        System.out.print("Ingrese el nombre del ramo: ");
+        String ramo = scanner.nextLine();
+
+        boolean eliminada = ayudanteActual.eliminarAyudantia(ramo);
+        if (eliminada) {
+            System.out.println("Ayudantia eliminada");
+        } else {
+            System.out.println("No se encontro la ayudantia");
+        }
     }
 }
 
