@@ -135,6 +135,15 @@ public class Menu {
             HistorialTxt.eliminarAyudantiaDelArchivo(ayudanteActual, ramo);
             ayudanteActual.recalcularHorasTotales();
             System.out.println("Ayudantia eliminada");
+            System.out.print("Ingrese el valor por hora: ");
+            double valor;
+            try {
+                valor = Double.parseDouble(scanner.nextLine());
+            }catch (NumberFormatException e) {
+                System.out.println("Entrada invalida.");
+                valor = 0;
+            }
+            controladorHoras.mostrarResumen(valor);
         } else {
             System.out.println("No se encontro la ayudantia");
         }
