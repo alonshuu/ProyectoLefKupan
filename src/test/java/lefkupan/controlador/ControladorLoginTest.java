@@ -14,9 +14,11 @@ public class ControladorLoginTest {
         assertEquals("1234", a.getContrasena());
     }
 
+    // chequea que las credenciales sean validas en el archivo usuarios.txt
+
     @Test
     public void autenticarCredencialesInvalidasRetornaNull() {
         Ayudante a = ControladorLogin.autenticar("21247650122", "alonso123");
         assertNull(a);
-    }
+    } // asegura autenticacion falla cuando no se encuentran en el archivo o formateados de forma correcta en este
 }
