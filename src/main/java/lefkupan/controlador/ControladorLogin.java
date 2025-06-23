@@ -9,27 +9,37 @@ import java.io.InputStreamReader;
 
 public class ControladorLogin {
     public static Ayudante autenticar(String matricula, String contrasena) {
+        BufferedReader lector = obtenerLectorUsuarios();
+        if (lector == null) return null;
+
         try {
-            InputStream is = ControladorLogin.class.getClassLoader().getResourceAsStream("usuarios.txt");
-            if (is == null) {
-                System.out.println("Archivo no encontrado");
-                return null;
-            }
-
-            BufferedReader lector = new BufferedReader(new InputStreamReader(is));
             String linea;
-
             while ((linea = lector.readLine()) != null) {
-                String[] partes = linea.split(";");
-                if (partes.length == 2 && partes[0].equals(matricula) && partes[1].equals(contrasena)) {
+                if (credencialesValidas(linea, matricula, contrasena)) {
                     return new Ayudante(matricula, contrasena);
                 }
             }
-            lector.close();
         } catch (IOException e) {
-            System.out.println("Error al leer el archivo");
+            System.out.println("Error leyendo usuarios: " + e.getMessage());
+        }
+        return null;
+    }
+
+    private static BufferedReader obtenerLectorUsuarios() {
+        InputStream entrada = ControladorLogin.class.getClassLoader().getResourceAsStream("usuarios.txt");
+
+        if (entrada == null) {
+            System.out.println("Archivo 'usuarios.txt' no encontrado.");
+            return null;
         }
 
-        return null;
+        return new BufferedReader(new InputStreamReader(entrada));
+    }
+
+    private static boolean credencialesValidas(String linea, String matricula, String contrasena) {
+        String[] partes = linea.split(";");
+        return partes.length == 2 &&
+                partes[0].trim().equals(matricula) &&
+                partes[1].trim().equals(contrasena);
     }
 }

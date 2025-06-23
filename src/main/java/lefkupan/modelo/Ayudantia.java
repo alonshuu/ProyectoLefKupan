@@ -9,6 +9,9 @@ public class Ayudantia{
     private List<RegistroHoras> registrosHoras;
 
     public Ayudantia(String nombreRamo){
+        if (nombreRamo == null || nombreRamo.isBlank()) {
+            throw new IllegalArgumentException("Nombre de ramo no puede estar vacio");
+        }
         this.nombreRamo = nombreRamo;
         this.registrosHoras = new ArrayList<>();
     }
@@ -22,15 +25,27 @@ public class Ayudantia{
     }
 
     public void agregarHoras(double cantidad){
-        if (cantidad <= 0){
-            throw new IllegalArgumentException("Horas invalidas");
+        agregarHoras(LocalDate.now(), cantidad);
+    }
+
+    public void agregarHoras(LocalDate fecha, double cantidad) {
+        if (cantidad <= 0) {
+            throw new IllegalArgumentException("Horas inválidas");
         }
-        RegistroHoras registro = new RegistroHoras(LocalDate.now(), cantidad);
-        registrosHoras.add(registro);
+        registrosHoras.add(new RegistroHoras(fecha, cantidad));
     }
+
     public double getTotalHoras() {
-        return registrosHoras.stream().mapToDouble(RegistroHoras::getCantidad).sum();
+        return registrosHoras.stream()
+                .mapToDouble(RegistroHoras::getCantidad).
+                sum();
     }
+
+    public boolean eliminarRegistro(LocalDate fecha, double cantidad) {
+        return registrosHoras.removeIf(r ->
+                r.getFecha().equals(fecha) && r.getCantidad() == cantidad);
+    }
+
 
     @Override
     public String toString(){

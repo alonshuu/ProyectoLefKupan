@@ -21,7 +21,7 @@ public class Ayudante {
     }
 
     public String getContrasena(){
-        return contrasena;
+        return "****";
     }
 
     public double getHorasTrabajadas() {
@@ -36,23 +36,23 @@ public class Ayudante {
         ayudantias.add(ayudantia);
     }
 
-    public void registrarHoras(String ramo, double cantidad){
-        if (cantidad<=0) {
-            return;
-        }
+    public void registrarHoras(String ramo, double cantidad) {
+        if (cantidad <= 0) return;
 
-        Ayudantia ayudantia = ayudantias.stream()
-                .filter(a -> a.getNombreRamo().equalsIgnoreCase(ramo))
-                .findFirst()
-                .orElse(null);
-
-        if (ayudantia == null) {
-            ayudantia = new Ayudantia(ramo);
-            ayudantias.add(ayudantia);
-        }
-
+        Ayudantia ayudantia = obtenerOcrearAyudantia(ramo);
         ayudantia.agregarHoras(cantidad);
         horasTrabajadas += cantidad;
+    }
+
+    private Ayudantia obtenerOcrearAyudantia(String ramo) {
+        return ayudantias.stream()
+                .filter(a -> a.getNombreRamo().equalsIgnoreCase(ramo))
+                .findFirst()
+                .orElseGet(() -> {
+                    Ayudantia nueva = new Ayudantia(ramo);
+                    ayudantias.add(nueva);
+                    return nueva;
+                });
     }
 
     public double calcularPago(double valorPorHora) {
@@ -60,17 +60,18 @@ public class Ayudante {
     }
 
     public boolean eliminarAyudantia(String nombreRamo) {
-        Ayudantia encontrada = ayudantias.stream()
+        Ayudantia ayudantia = obtenerAyudantia(nombreRamo);
+        if (ayudantia == null) return false;
+
+        horasTrabajadas -= ayudantia.getTotalHoras();
+        return ayudantias.remove(ayudantia);
+    }
+
+    private Ayudantia obtenerAyudantia(String nombreRamo) {
+        return ayudantias.stream()
                 .filter(a -> a.getNombreRamo().equalsIgnoreCase(nombreRamo))
                 .findFirst()
                 .orElse(null);
-
-        if (encontrada != null) {
-            horasTrabajadas -= encontrada.getTotalHoras();
-            ayudantias.remove(encontrada);
-            return true;
-        }
-        return false;
     }
 
     public void recalcularHorasTotales() {
