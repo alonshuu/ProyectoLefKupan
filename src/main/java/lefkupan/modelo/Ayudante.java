@@ -73,6 +73,12 @@ public class Ayudante {
         return false;
     }
 
+    public void recalcularHorasTotales() {
+        this.horasTrabajadas = ayudantias.stream()
+                .mapToDouble(Ayudantia::getTotalHoras)
+                .sum();
+    }
+
     @Override
     public String toString(){
         return "Ayudante{"+ "matricula= " + matricula + ", horas= " + horasTrabajadas + "}";
