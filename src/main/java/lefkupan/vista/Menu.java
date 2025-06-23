@@ -130,7 +130,10 @@ public class Menu {
         String ramo = scanner.nextLine();
 
         boolean eliminada = ayudanteActual.eliminarAyudantia(ramo);
+
         if (eliminada) {
+            HistorialTxt.eliminarAyudantiaDelArchivo(ayudanteActual, ramo);
+            ayudanteActual.recalcularHorasTotales();
             System.out.println("Ayudantia eliminada");
         } else {
             System.out.println("No se encontro la ayudantia");
