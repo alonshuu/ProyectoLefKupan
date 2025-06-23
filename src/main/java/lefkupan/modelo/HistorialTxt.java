@@ -2,54 +2,109 @@ package lefkupan.modelo;
 
 import java.io.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class HistorialTxt {
 
     public static void cargarHistorial(Ayudante ayudante) {
-        String nombreArchivo = "historial_" + ayudante.getMatricula() + ".txt";
-        File archivo = new File(nombreArchivo);
-
-        if (!archivo.exists()) {
-            System.out.println("No existe historial para esta matricula.");
-            return;
-        }
-
-        try (BufferedReader lector = new BufferedReader(new FileReader(archivo))) {
-            String linea;
-            while ((linea = lector.readLine()) != null) {
-                String[] partes = linea.split(",");
-                if (partes.length == 3) {
-                    LocalDate fecha = LocalDate.parse(partes[0]);
-                    String ramo = partes[1];
-                    double horas = Double.parseDouble(partes[2]);
-
-                    Ayudantia ayudantia = ayudante.getAyudantias().stream()
-                            .filter(a -> a.getNombreRamo().equalsIgnoreCase(ramo))
-                            .findFirst()
-                            .orElse(null);
-
-                    if (ayudantia == null) {
-                        ayudantia = new Ayudantia(ramo);
-                        ayudante.agregarAyudantia(ayudantia);
-                    }
-
-                    ayudantia.getRegistrosHoras().add(new RegistroHoras(fecha, horas));
-                    ayudante.registrarHoras(ramo, 0);
-                    ayudante.registrarHoras(ramo, horas);
-                }
-            }
-        } catch (IOException e) {
-            System.out.println("Error al cargar historial: " + e.getMessage());
+        List<String[]> lineas = leerLineasDesdeArchivo(ayudante);
+        for (String[] partes : lineas) {
+            procesarLineaHistorial(ayudante, partes);
         }
     }
 
     public static void guardarRegistro(Ayudante ayudante, String ramo, double horas) {
-        String nombreArchivo = "historial_" + ayudante.getMatricula() + ".txt";
-        String fechaHoy = LocalDate.now().toString();
-        String linea = fechaHoy + "," + ramo + "," + horas;
+        String linea = LocalDate.now() + "," + ramo + "," + horas;
+        escribirLinea(ayudante, linea);
+    }
 
-        try (BufferedWriter escritor = new BufferedWriter(new FileWriter(nombreArchivo, true))) {
+    public static void eliminarAyudantiaDelArchivo(Ayudante ayudante, String ramo) {
+        List<String[]> lineas = leerLineasDesdeArchivo(ayudante);
+        List<String> filtradas = new ArrayList<>();
+
+        for (String[] partes : lineas) {
+            if (!partes[1].equalsIgnoreCase(ramo)) {
+                filtradas.add(String.join(",", partes));
+            }
+        }
+        reemplazarArchivo(ayudante, filtradas);
+    }
+
+    public static void eliminarRegistroDelArchivo(Ayudante ayudante, String ramo, RegistroHoras registro) {
+        List<String[]> lineas = leerLineasDesdeArchivo(ayudante);
+        List<String> filtradas = new ArrayList<>();
+        boolean eliminado = false;
+
+        for (String[] partes : lineas) {
+            boolean esIgual = partes[0].equals(registro.getFecha().toString()) && partes[1].equalsIgnoreCase(ramo) && Double.parseDouble(partes[2]) == registro.getCantidad();
+
+            if (!eliminado && esIgual) {
+                filtradas.add(String.join(",", partes));
+            }
+        }
+        reemplazarArchivo(ayudante, filtradas);
+    }
+
+    public static void mostrarHistorialPagos(Ayudante ayudante, double valorPorHora) {
+        List<String[]> lineas = leerLineasDesdeArchivo(ayudante);
+        double total = mostrarTablaPagos(lineas, valorPorHora);
+        mostrarTotalPagado(total);
+    }
+
+    private static List<String[]> leerLineasDesdeArchivo(Ayudante ayudante) {
+        List<String[]> registros = new ArrayList<>();
+        String archivo = "historial_" + ayudante.getMatricula() + ".txt";
+
+        File file = new File(archivo);
+        if (!file.exists()) {
+            System.out.println("No existe historial para esta matricula.");
+            return registros;
+        }
+
+        try (BufferedReader lector = new BufferedReader(new FileReader(file))) {
+            String linea;
+            while ((linea = lector.readLine()) != null) {
+                String[] partes = linea.split(",");
+                if (partes.length == 3) {
+                    registros.add(partes);
+                }
+            }
+
+        } catch (IOException e) {
+            System.out.println("Error al leer el historial: " + e.getMessage());
+        }
+
+        return registros;
+    }
+
+    private static void procesarLineaHistorial(Ayudante ayudante, String[] partes) {
+        try {
+            LocalDate fecha = LocalDate.parse(partes[0]);
+            String ramo = partes[1];
+            double horas = Double.parseDouble(partes[2]);
+
+            Ayudantia ayudantia = ayudante.getAyudantias().stream()
+                    .filter(a -> a.getNombreRamo().equalsIgnoreCase(ramo))
+                    .findFirst()
+                    .orElse(null);
+
+            if (ayudantia == null) {
+                ayudantia = new Ayudantia(ramo);
+                ayudante.agregarAyudantia(ayudantia);
+            }
+
+            ayudantia.getRegistrosHoras().add(new RegistroHoras(fecha, horas));
+            ayudante.registrarHoras(ramo, 0); // evitar duplicar
+            ayudante.registrarHoras(ramo, horas);
+        } catch (Exception e) {
+            System.out.println("Error al procesar linea de historial");
+        }
+    }
+
+    private static void escribirLinea(Ayudante ayudante, String linea) {
+        String archivo = "historial_" + ayudante.getMatricula() + ".txt";
+        try (BufferedWriter escritor = new BufferedWriter(new FileWriter(archivo, true))) {
             escritor.write(linea);
             escritor.newLine();
         } catch (IOException e) {
@@ -57,76 +112,50 @@ public class HistorialTxt {
         }
     }
 
-    public static void eliminarAyudantiaDelArchivo(Ayudante ayudante, String ramo) {
-        String nombreArchivo = "historial_" + ayudante.getMatricula() + ".txt";
-        File archivo = new File(nombreArchivo);
+    private static void reemplazarArchivo(Ayudante ayudante, List<String> nuevasLineas) {
+        String archivo = "historial_" + ayudante.getMatricula() + ".txt";
+        File original = new File(archivo);
+        File temporal = new File(archivo + ".tmp");
 
-        if (!archivo.exists()) {
-            System.out.println("No existe historial para esta matricula");
-            return;
-        }
-
-        File archivoTemporal = new File(nombreArchivo + ".tmp");
-
-        try (
-            BufferedReader lector = new BufferedReader(new FileReader(archivo));
-            BufferedWriter escritor = new BufferedWriter(new FileWriter(archivoTemporal))
-        ) {
-            String linea;
-            while ((linea = lector.readLine()) != null) {
-                String[] partes = linea.split(",");
-                if (partes.length == 3 && !partes[1].equalsIgnoreCase(ramo)) {
-                    escritor.write(linea);
-                    escritor.newLine();
-                }
-            }
-        } catch (IOException e) {
-            System.out.println("Error al modificar historial: " + e.getMessage());
-            return;
-        }
-
-        if (archivo.delete()) {
-            archivoTemporal.renameTo(archivo);
-        } else {
-            System.out.println("No se pudo eliminar el archivo original.");
-        }
-    }
-
-    public static void eliminarRegistroDelArchivo(Ayudante ayudante, String ramo, RegistroHoras registro) {
-        String nombreArchivo = "historial_" + ayudante.getMatricula() + ".txt";
-        File archivo = new File(nombreArchivo);
-        File temp = new File(nombreArchivo + ".tmp");
-
-        try (
-                BufferedReader lector = new BufferedReader(new FileReader(archivo));
-                BufferedWriter escritor = new BufferedWriter(new FileWriter(temp))
-        ) {
-            String linea;
-            boolean eliminado = false;
-
-            while ((linea = lector.readLine()) != null) {
-                String[] partes = linea.split(",");
-                if (partes.length == 3 &&
-                        partes[0].equals(registro.getFecha().toString()) &&
-                        partes[1].equalsIgnoreCase(ramo) &&
-                        Double.parseDouble(partes[2]) == registro.getCantidad() &&
-                        !eliminado) {
-                    eliminado = true;
-                    continue;
-                }
+        try (BufferedWriter escritor = new BufferedWriter(new FileWriter(temporal))) {
+            for (String linea : nuevasLineas) {
                 escritor.write(linea);
                 escritor.newLine();
             }
         } catch (IOException e) {
-            System.out.println("Error al eliminar registro del archivo");
+            System.out.println("Error al escribir archivo temporal");
             return;
         }
 
-        if (archivo.delete()) {
-            temp.renameTo(archivo);
-        } else {
-            System.out.println("No se pudo sobrescribir el archivo original");
+        if (!original.delete() || !temporal.renameTo(original)) {
+            System.out.println("Error al sobrescribir el archivo original");
         }
     }
+
+    private static double mostrarTablaPagos(List<String[]> registros, double valorPorHora) {
+        double total = 0;
+
+        System.out.println("========== Historial de Pagos ==========");
+        System.out.printf("%-12s | %-15s | %-8s | %-8s%n", "Fecha", "Ramo", "Horas", "Pago");
+        System.out.println("--------------------------------------------");
+
+        for (String[] partes : registros) {
+            String fecha = partes[0];
+            String ramo = partes[1];
+            double horas = Double.parseDouble(partes[2]);
+            double pago = horas * valorPorHora;
+            total += pago;
+
+            System.out.printf("%-12s | %-15s | %-8.2f | $%-8.2f%n", fecha, ramo, horas, pago);
+        }
+
+        return total;
+    }
+
+    private static void mostrarTotalPagado(double total) {
+        System.out.println("--------------------------------------------");
+        System.out.printf("Total de pagos: $%.2f%n", total);
+    }
+
 
 }
