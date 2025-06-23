@@ -140,7 +140,7 @@ public class Menu {
             try {
                 valor = Double.parseDouble(scanner.nextLine());
             }catch (NumberFormatException e) {
-                System.out.println("Entrada invalida.");
+                System.out.println("Entrada invalida");
                 valor = 0;
             }
             controladorHoras.mostrarResumen(valor);
