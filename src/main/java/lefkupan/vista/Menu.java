@@ -3,8 +3,11 @@ package lefkupan.vista;
 import lefkupan.controlador.ControladorHoras;
 import lefkupan.controlador.ControladorLogin;
 import lefkupan.modelo.Ayudante;
+import lefkupan.modelo.Ayudantia;
 import lefkupan.modelo.HistorialTxt;
+import lefkupan.modelo.RegistroHoras;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class Menu {
@@ -58,19 +61,18 @@ public class Menu {
         System.out.println("1. Registrar horas trabajadas");
         System.out.println("2. Ver resumen de horas y pago");
         System.out.println("3. Eliminar ayudantia");
-        System.out.println("4. Eliminar un registro especifico (fecha y ramo): ");
-        System.out.println("5. Salir");
+        System.out.println("4. Eliminar un registro especifico: ");
+        System.out.println("5. Ver historial de pagos");
+        System.out.println("6. Salir");
         System.out.print("Selecciona una opcion: ");
     }
 
     private int leerOpcion() {
-        int opcion;
         try {
-            opcion = Integer.parseInt(scanner.nextLine());
+            return Integer.parseInt(scanner.nextLine());
         } catch (NumberFormatException e) {
-            opcion = -1;
+            return -1;
         }
-        return opcion;
     }
 
     private boolean ejecutarOpcion(int opcion) {
@@ -91,114 +93,107 @@ public class Menu {
                 eliminarRegistroEspecifico();
                 break;
 
-            case 5: {
+            case 5:
+                verHistorialPagos();
+                break;
+
+            case 6: {
                 System.out.println("Adios");
                 return true;
             }
             default:
-                System.out.println("Opcion invalida. Intente de nuevo.");
+                System.out.println("Opcion invalida. Intente de nuevo");
         }
         return false;
     }
 
     private void registrarHoras() {
-        System.out.print("Ingrese el nombre del ramo: ");
-        String ramo = scanner.nextLine();
-
-        System.out.print("Ingrese la cantidad de horas: ");
-        double horas;
-        try {
-            horas = Double.parseDouble(scanner.nextLine());
-        } catch (NumberFormatException e) {
-            System.out.println("Debe ingresar un numero.");
-            return;
-        }
-
+        String ramo = solicitarTexto("Ingrese el nombre del ramo: ");
+        double horas = solicitarNumero("Ingrese la cantidad de horas: ");
         controladorHoras.registrarHoras(ramo, horas);
     }
 
     private void mostrarResumen() {
-        System.out.print("Ingrese el valor por hora: ");
-        double valor;
-        try {
-            valor = Double.parseDouble(scanner.nextLine());
-        } catch (NumberFormatException e) {
-            System.out.println("Entrada invalida.");
-            return;
-        }
-
+        double valor = solicitarNumero("Ingrese el valor por hora: ");
         controladorHoras.mostrarResumen(valor);
     }
 
     private void eliminarAyudantia() {
-        System.out.print("Ingrese el nombre del ramo: ");
-        String ramo = scanner.nextLine();
-
+        String ramo = solicitarTexto("Ingrese el nombre del ramo: ");
         boolean eliminada = ayudanteActual.eliminarAyudantia(ramo);
 
         if (eliminada) {
             HistorialTxt.eliminarAyudantiaDelArchivo(ayudanteActual, ramo);
             ayudanteActual.recalcularHorasTotales();
-            System.out.println("Ayudantia eliminada");
-            System.out.print("Ingrese el valor por hora: ");
-            double valor;
-            try {
-                valor = Double.parseDouble(scanner.nextLine());
-            } catch (NumberFormatException e) {
-                System.out.println("Entrada invalida");
-                valor = 0;
-            }
-            controladorHoras.mostrarResumen(valor);
+            System.out.println("Ayudantia eliminada correctamente");
         } else {
             System.out.println("No se encontro la ayudantia");
         }
     }
 
     private void eliminarRegistroEspecifico() {
-        System.out.print("Ingrese el nombre del ramo: ");
-        String ramo = scanner.nextLine();
-
-        var ayudantia = ayudanteActual.getAyudantias().stream()
-                .filter(a -> a.getNombreRamo().equalsIgnoreCase(ramo))
-                .findFirst()
-                .orElse(null);
-
-        if (ayudantia == null) {
-            System.out.println("No se encontro ayudantia");
-            return;
-        }
-
-        var registros = ayudantia.getRegistrosHoras();
-        if (registros.isEmpty()) {
+        String ramo = solicitarTexto("Ingrese el nombre del ramo: ");
+        Ayudantia ayudantia = buscarAyudantia(ramo);
+        if (ayudantia == null || ayudantia.getRegistrosHoras().isEmpty()) {
             System.out.println("No hay registros");
             return;
         }
 
-        System.out.println("Registros disponibles: ");
+        mostrarRegistros(ayudantia);
+        int index = solicitarIndice(ayudantia.getRegistrosHoras().size());
+        if (index == -1) return;
+
+        RegistroHoras eliminado = ayudantia.getRegistrosHoras().remove(index);
+        ayudanteActual.recalcularHorasTotales();
+        HistorialTxt.eliminarRegistroDelArchivo(ayudanteActual, ramo, eliminado);
+        System.out.println("Registro eliminado correctamente");
+    }
+
+    private void verHistorialPagos() {
+        double valor = solicitarNumero("Ingrese el valor por hora: ");
+        HistorialTxt.mostrarHistorialPagos(ayudanteActual, valor);
+    }
+
+    private String solicitarTexto(String mensaje) {
+        System.out.print(mensaje);
+        return scanner.nextLine();
+    }
+
+    private double solicitarNumero(String mensaje) {
+        System.out.print(mensaje);
+        try {
+            return Double.parseDouble(scanner.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Entrada invalida");
+            return 0;
+        }
+    }
+
+    private Ayudantia buscarAyudantia(String ramo) {
+        return ayudanteActual.getAyudantias().stream()
+                .filter(a -> a.getNombreRamo().equalsIgnoreCase(ramo))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private void mostrarRegistros(Ayudantia ayudantia) {
+        System.out.println("Registros disponibles:");
+        List<RegistroHoras> registros = ayudantia.getRegistrosHoras();
         for (int i = 0; i < registros.size(); i++) {
             System.out.println("[" + (i + 1) + "] " + registros.get(i));
         }
+    }
 
-        System.out.print("Ingrese el numero del registro que desea eliminar: ");
-        int seleccion;
+    private int solicitarIndice(int size) {
+        System.out.print("Seleccione un registro: ");
         try {
-            seleccion = Integer.parseInt(scanner.nextLine()) - 1;
-        } catch (NumberFormatException e) {
-            System.out.println("Entrada invalida.");
-            return;
-        }
-
-        if (seleccion < 0 || seleccion >= registros.size()) {
-            System.out.println("Error");
-            return;
-        }
-
-        var registroEliminado = registros.remove(seleccion);
-        ayudanteActual.recalcularHorasTotales();
-
-        HistorialTxt.eliminarRegistroDelArchivo(ayudanteActual, ramo, registroEliminado);
-
-        System.out.println("Ayudantia eliminada");
-
+            int seleccion = Integer.parseInt(scanner.nextLine()) - 1;
+            if (seleccion >= 0 && seleccion < size) return seleccion;
+        } catch (NumberFormatException ignored) {}
+        System.out.println("Indice invalido");
+        return -1;
     }
 }
+
+
+
