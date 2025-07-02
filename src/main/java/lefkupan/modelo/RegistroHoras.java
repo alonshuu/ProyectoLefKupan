@@ -39,10 +39,11 @@ public class RegistroHoras {
     //CAMBIO: implementacion de equals y hashCode, para comparacion logica util para eliminaciones o busquedas.
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof RegistroHoras)) return false;
-        RegistroHoras that = (RegistroHoras) o;
-        return Double.compare(that.cantidad, cantidad) == 0 &&
-                Objects.equals(fecha, that.fecha);
+        if (o instanceof RegistroHoras that) {
+            return Double.compare(that.cantidad, cantidad) == 0 &&
+                    Objects.equals(fecha, that.fecha);
+        }
+        return false;
     }
 
     @Override
