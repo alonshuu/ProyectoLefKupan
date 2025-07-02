@@ -2,8 +2,6 @@ package lefkupan.modelo;
 
 import java.io.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 //CLASE HistorialTxt: clase utilitaria, sirve para guargar y leer archivos desde archivos .txt .
