@@ -6,9 +6,9 @@ import java.util.Optional;
 
 //CLASE Ayudante: representa a un ayudante de la DME, con datos y ayudantias.
 public class Ayudante {
-    private String matricula;
+    private final String matricula;
     private String contrasena; //CAMBIO:se quito el atributo horasTrabajadas porque era un dato derivado de otro.
-    private List<Ayudantia> ayudantias;
+    private final List<Ayudantia> ayudantias;
 
     public Ayudante(String matricula, String contrasena){
         //CAMBIO:validaciones estrictas en el metodo contructor.
