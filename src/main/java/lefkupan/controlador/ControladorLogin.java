@@ -2,43 +2,45 @@ package lefkupan.controlador;
 
 import lefkupan.modelo.Ayudante;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
-//CLASE ControladorLogin: clase encargada de autenticar usuarios desde un archivo plano.
 public class ControladorLogin {
-
-    public static final String RUTA_USUARIOS = "src/main/resources/usuarios.txt";
-
     public static Ayudante autenticar(String matricula, String contrasena) {
-        //CAMBIO: autentica un ayudante a partir del archivo usuario
-        try (Scanner scanner = obtenerLectorUsuarios()) {
-            while (scanner.hasNextLine()) {
-                String[] datos = scanner.nextLine().split(",");
-                if (datos.length != 2) continue;
+        BufferedReader lector = obtenerLectorUsuarios();
+        if (lector == null) return null;
 
-                String mat = datos[0];
-                String pass = datos[1];
-
-                if (credencialesValidas(matricula, contrasena,mat, pass)) {
-                    //CAMBIO: reutilizacion de comparacion en metodo separado.
-                    return new Ayudante(mat, pass);
+        try {
+            String linea;
+            while ((linea = lector.readLine()) != null) {
+                if (credencialesValidas(linea, matricula, contrasena)) {
+                    return new Ayudante(matricula, contrasena);
                 }
             }
-        } catch (FileNotFoundException e) {
-            System.err.println("Archivo no encontrado");
+        } catch (IOException e) {
+            System.out.println("Error leyendo usuarios: " + e.getMessage());
         }
-        return null; //CAMBIO: autenticacion fallida controlada.
+        return null;
     }
 
-    private static Scanner obtenerLectorUsuarios() throws FileNotFoundException {
-        //CAMBIO: metodo privado para centralizar lectura del archivo de usuarios.
-        return new Scanner(new File(RUTA_USUARIOS));
+    private static BufferedReader obtenerLectorUsuarios() {
+        InputStream entrada = ControladorLogin.class.getClassLoader().getResourceAsStream("usuarios.txt");
+
+        if (entrada == null) {
+            System.out.println("Archivo 'usuarios.txt' no encontrado.");
+            return null;
+        }
+
+        return new BufferedReader(new InputStreamReader(entrada));
     }
 
-    private static boolean credencialesValidas(String entradaMatricula, String entradaContrasena, String mat, String pass) {
-
-        return entradaMatricula.equals(mat) && entradaContrasena.equals(pass);
+    private static boolean credencialesValidas(String linea, String matricula, String contrasena) {
+        String[] partes = linea.split(";");
+        return partes.length == 2 &&
+                partes[0].trim().equals(matricula) &&
+                partes[1].trim().equals(contrasena);
     }
 }
+
