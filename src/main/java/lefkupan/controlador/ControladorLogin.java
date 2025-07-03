@@ -43,3 +43,4 @@ public class ControladorLogin {
                 partes[1].trim().equals(contrasena);
     }
 }
+
