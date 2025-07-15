@@ -6,19 +6,15 @@ import java.util.List;
 public class Ayudante { //representa un ayudante con su información de acceso y registros
     //CAMBIO: se agrego final
     private final String matricula;
-    private final String contrasena;
+    // private String contrasena; // CAMBIO: comentado para uso futuro
     private final List<Ayudantia> ayudantias;
 
-    public Ayudante(String matricula, String contrasena){ //constructor de ayudante
-        // CAMBIO: validaciones básicas
+    public Ayudante(String matricula) { //constructor de ayudante
+        // CAMBIO: Constructor sin almacenar la contraseña
         if(matricula == null || matricula.isBlank()){
             throw new IllegalArgumentException("El matricula es obligatoria");
         }
-        if(contrasena == null || contrasena.isBlank()){
-            throw new IllegalArgumentException("La contraseña es obligatoria");
-        }
         this.matricula = matricula;
-        this.contrasena = contrasena;
         this.ayudantias = new ArrayList<>();
     }
 
@@ -42,10 +38,6 @@ public class Ayudante { //representa un ayudante con su información de acceso y
 
     public String getMatricula(){
         return matricula;
-    }
-
-    public String getContrasena(){
-        return "****";
     }
 
     public List<Ayudantia> getAyudantias() {
