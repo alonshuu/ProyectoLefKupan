@@ -1,18 +1,21 @@
 package lefkupan.modelo;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-public class RegistroHoras {
+public class RegistroHoras { //registro de horas trabajadas en una fecha específica
     private LocalDate fecha;
     private double cantidad;
+    private TipoActividad tipoActividad; //CAMBIO: uso de enum en vez de String
 
-    public RegistroHoras(LocalDate fecha, double cantidad) {
-        this.fecha = Objects.requireNonNull(fecha,"La fecha no puede ser nula");
+    public RegistroHoras(LocalDate fecha, double cantidad, TipoActividad tipoActividad) { //constructor de RegistroHoras
         if (cantidad <= 0) {
-            throw new IllegalArgumentException("Horas invalidas");
+            throw new IllegalArgumentException("Hora invalida");
         }
+        this.fecha = fecha;
         this.cantidad = cantidad;
+        this.tipoActividad = tipoActividad;
     }
 
     public LocalDate getFecha() {
@@ -23,22 +26,29 @@ public class RegistroHoras {
         return cantidad;
     }
 
-    @Override
-    public String toString() {
-        return fecha + ": " + cantidad + " hrs";
+    public TipoActividad getTipoActividad() {
+        return tipoActividad;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof RegistroHoras)) return false;
-        RegistroHoras that = (RegistroHoras) o;
-        return Double.compare(that.cantidad, cantidad) == 0 &&
-                fecha.equals(that.fecha);
+    public String toString() {
+        return String.format("Fecha: %s | Horas: %.2f | Actividad: %s",
+                fecha.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")),
+                cantidad,
+                tipoActividad.name());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof RegistroHoras other)) return false;
+        return cantidad == other.cantidad &&
+                Objects.equals(fecha, other.fecha) &&
+                tipoActividad == other.tipoActividad;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fecha, cantidad);
+        return Objects.hash(fecha, cantidad,tipoActividad);
     }
 }
