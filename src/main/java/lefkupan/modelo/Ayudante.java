@@ -3,17 +3,41 @@ package lefkupan.modelo;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Ayudante {
-    private String matricula;
-    private String contrasena;
-    private double horasTrabajadas;
-    private List<Ayudantia> ayudantias;
+public class Ayudante { //representa un ayudante con su información de acceso y registros
+    //CAMBIO: se agrego final
+    private final String matricula;
+    private final String contrasena;
+    private final List<Ayudantia> ayudantias;
 
-    public Ayudante(String matricula, String contrasena){
+    public Ayudante(String matricula, String contrasena){ //constructor de ayudante
+        // CAMBIO: validaciones básicas
+        if(matricula == null || matricula.isBlank()){
+            throw new IllegalArgumentException("El matricula es obligatoria");
+        }
+        if(contrasena == null || contrasena.isBlank()){
+            throw new IllegalArgumentException("La contraseña es obligatoria");
+        }
         this.matricula = matricula;
         this.contrasena = contrasena;
-        this.horasTrabajadas = 0;
         this.ayudantias = new ArrayList<>();
+    }
+
+    public void agregarAyudantia(Ayudantia ayudantia) { // Agrega una nueva ayudantía al ayudante
+        ayudantias.add(ayudantia);
+    }
+
+    public boolean eliminarAyudantia(String nombreRamo) { //elimina una ayudantia especifica por nombre
+        return ayudantias.removeIf(a -> a.getNombreRamo().equalsIgnoreCase(nombreRamo));
+    }
+
+    public double getHorasTotales() { //obtiene el total de horas trabajadas entre todas las ayudantias
+        return ayudantias.stream()
+                .mapToDouble(Ayudantia::getTotalHoras)
+                .sum();
+    }
+
+    public double calcularPago(double valorHora) { //calcula el pago total estimado
+        return getHorasTotales() * valorHora;
     }
 
     public String getMatricula(){
@@ -24,65 +48,13 @@ public class Ayudante {
         return "****";
     }
 
-    public double getHorasTrabajadas() {
-        return horasTrabajadas;
-    }
-
     public List<Ayudantia> getAyudantias() {
         return ayudantias;
     }
 
-    public void agregarAyudantia(Ayudantia ayudantia) {
-        ayudantias.add(ayudantia);
-    }
-
-    public void registrarHoras(String ramo, double cantidad) {
-        if (cantidad <= 0) return;
-
-        Ayudantia ayudantia = obtenerOcrearAyudantia(ramo);
-        ayudantia.agregarHoras(cantidad);
-        horasTrabajadas += cantidad;
-    }
-
-    private Ayudantia obtenerOcrearAyudantia(String ramo) {
-        return ayudantias.stream()
-                .filter(a -> a.getNombreRamo().equalsIgnoreCase(ramo))
-                .findFirst()
-                .orElseGet(() -> {
-                    Ayudantia nueva = new Ayudantia(ramo);
-                    ayudantias.add(nueva);
-                    return nueva;
-                });
-    }
-
-    public double calcularPago(double valorPorHora) {
-        return horasTrabajadas * valorPorHora;
-    }
-
-    public boolean eliminarAyudantia(String nombreRamo) {
-        Ayudantia ayudantia = obtenerAyudantia(nombreRamo);
-        if (ayudantia == null) return false;
-
-        horasTrabajadas -= ayudantia.getTotalHoras();
-        return ayudantias.remove(ayudantia);
-    }
-
-    private Ayudantia obtenerAyudantia(String nombreRamo) {
-        return ayudantias.stream()
-                .filter(a -> a.getNombreRamo().equalsIgnoreCase(nombreRamo))
-                .findFirst()
-                .orElse(null);
-    }
-
-    public void recalcularHorasTotales() {
-        this.horasTrabajadas = ayudantias.stream()
-                .mapToDouble(Ayudantia::getTotalHoras)
-                .sum();
-    }
-
     @Override
     public String toString(){
-        return "Ayudante{"+ "matricula= " + matricula + ", horas= " + horasTrabajadas + "}";
+        return String.format("Ayudante: %s | Total horas: %.2f",  matricula, getHorasTotales());
     }
 }
 
