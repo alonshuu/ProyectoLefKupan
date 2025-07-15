@@ -9,17 +9,22 @@ public class HistorialTxt { //cargar y guardar registros de horas en archivos .t
     private static final String CARPETA_BASE = "data";
 
     static {
-        File carpeta = new File(CARPETA_BASE); //CAMBIO: crear carpeta si no existe
-        if (!carpeta.exists()) {
-            carpeta.mkdir();
+        //crear carpeta si no existe
+        Path carpeta = Paths.get(CARPETA_BASE);
+        try {
+            if (!Files.exists(carpeta)) {
+                Files.createDirectories(carpeta);
+            }
+        } catch (IOException e) {
+            System.err.println("Error al crear el archivo de carpeta");
         }
     }
 
     public static void cargarHistorial(Ayudante ayudante) { //carga el historial desde el archivo .txt para un ayudante
         Path archivo = getRutaArchivo(ayudante.getMatricula());
-        if(!Files.exists(archivo)) return;
+        if (!Files.exists(archivo)) return;
 
-        try(BufferedReader reader = File.newBufferedReader(archivo)) {
+        try (BufferedReader reader = Files.newBufferedReader(archivo)) {
             String linea;
             while ((linea = reader.readLine()) !=null) {
                 //formato: fecha, ramo, horas, tipoActividad
@@ -95,7 +100,7 @@ public class HistorialTxt { //cargar y guardar registros de horas en archivos .t
 
 
     public static void mostrarHistorialPagos(Ayudante ayudante, double valorHora) { //muestra por consola el historial y pago estimado de un ayudante
-        System.out.println("\n📜 Historial de horas:");
+        System.out.println("\n Historial de horas:");
         for (Ayudantia a : ayudante.getAyudantias()) {
             System.out.println("\n" + a.getNombreRamo());
             for (RegistroHoras rh : a.getRegistrosHoras()) {
@@ -103,7 +108,7 @@ public class HistorialTxt { //cargar y guardar registros de horas en archivos .t
             }
         }
 
-        System.out.printf("\n💰 Total Horas: %.2f | Pago Estimado: $%.0f\n",
+        System.out.printf("\n Total Horas: %.2f | Pago Estimado: $%.0f\n",
                 ayudante.getHorasTotales(),
                 ayudante.calcularPago(valorHora));
     }
