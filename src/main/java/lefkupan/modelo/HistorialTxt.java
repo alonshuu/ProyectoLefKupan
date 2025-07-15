@@ -1,161 +1,129 @@
 package lefkupan.modelo;
 
 import java.io.*;
+import java.nio.file.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
-public class HistorialTxt {
+public class HistorialTxt { //cargar y guardar registros de horas en archivos .txt por ayudante
+    private static final String CARPETA_BASE = "data";
 
-    public static void cargarHistorial(Ayudante ayudante) {
-        List<String[]> lineas = leerLineasDesdeArchivo(ayudante);
-        for (String[] partes : lineas) {
-            procesarLineaHistorial(ayudante, partes);
+    static {
+        File carpeta = new File(CARPETA_BASE); //CAMBIO: crear carpeta si no existe
+        if (!carpeta.exists()) {
+            carpeta.mkdir();
         }
     }
 
-    public static void guardarRegistro(Ayudante ayudante, String ramo, double horas) {
-        String linea = LocalDate.now() + "," + ramo + "," + horas;
-        escribirLinea(ayudante, linea);
-    }
+    public static void cargarHistorial(Ayudante ayudante) { //carga el historial desde el archivo .txt para un ayudante
+        Path archivo = getRutaArchivo(ayudante.getMatricula());
+        if(!Files.exists(archivo)) return;
 
-    public static void eliminarAyudantiaDelArchivo(Ayudante ayudante, String ramo) {
-        List<String[]> lineas = leerLineasDesdeArchivo(ayudante);
-        List<String> filtradas = new ArrayList<>();
-
-        for (String[] partes : lineas) {
-            if (!partes[1].equalsIgnoreCase(ramo)) {
-                filtradas.add(String.join(",", partes));
-            }
-        }
-        reemplazarArchivo(ayudante, filtradas);
-    }
-
-    public static void eliminarRegistroDelArchivo(Ayudante ayudante, String ramo, RegistroHoras registro) {
-        List<String[]> lineas = leerLineasDesdeArchivo(ayudante);
-        List<String> filtradas = new ArrayList<>();
-        boolean eliminado = false;
-
-        for (String[] partes : lineas) {
-            boolean esIgual = partes[0].equals(registro.getFecha().toString()) && partes[1].equalsIgnoreCase(ramo) && Double.parseDouble(partes[2]) == registro.getCantidad();
-
-            if (!eliminado && esIgual) {
-                filtradas.add(String.join(",", partes));
-            }
-        }
-        reemplazarArchivo(ayudante, filtradas);
-    }
-
-    public static void mostrarHistorialPagos(Ayudante ayudante, double valorPorHora) {
-        List<String[]> lineas = leerLineasDesdeArchivo(ayudante);
-        double total = mostrarTablaPagos(lineas, valorPorHora);
-        mostrarTotalPagado(total);
-    }
-
-    private static List<String[]> leerLineasDesdeArchivo(Ayudante ayudante) {
-        List<String[]> registros = new ArrayList<>();
-        String archivo = "historial_" + ayudante.getMatricula() + ".txt";
-
-        File file = new File(archivo);
-        if (!file.exists()) {
-            System.out.println("No existe historial para esta matricula.");
-            return registros;
-        }
-
-        try (BufferedReader lector = new BufferedReader(new FileReader(file))) {
+        try(BufferedReader reader = File.newBufferedReader(archivo)) {
             String linea;
-            while ((linea = lector.readLine()) != null) {
-                String[] partes = linea.split(",");
-                if (partes.length == 3) {
-                    registros.add(partes);
-                }
+            while ((linea = reader.readLine()) !=null) {
+                //formato: fecha, ramo, horas, tipoActividad
+                String[] partes = linea.split(";");
+                if(partes.length != 4) continue;
+
+                LocalDate fecha = LocalDate.parse(partes[0]);
+                String ramo = partes[1];
+                double horas = Double.parseDouble(partes[2]);
+                TipoActividad tipo = TipoActividad.valueOf(partes[3]);
+
+                Ayudantia ayudantia = buscarOcrearAyudantia(ayudante, ramo);
+                ayudantia.agregarHoras(fecha, horas, tipo);
             }
-
-        } catch (IOException e) {
-            System.out.println("Error al leer el historial: " + e.getMessage());
+        } catch (IOException | IllegalArgumentException e) {
+            System.err.println("Error al leer el historial: " + e.getMessage());
         }
-
-        return registros;
     }
 
-    private static void procesarLineaHistorial(Ayudante ayudante, String[] partes) {
+    public static void guardarRegistro(Ayudante ayudante, String ramo, RegistroHoras registro) { //guarda un registro nuevo para el ayudante
+        Path archivo = getRutaArchivo(ayudante.getMatricula());
+
+        try (BufferedWriter writer = Files.newBufferedWriter(archivo, StandardOpenOption.CREATE, StandardOpenOption.APPEND)) {
+            String linea = String.format("%s,%s,%.2f,%s",
+                    registro.getFecha(),
+                    ramo,
+                    registro.getCantidad(),
+                    registro.getTipoActividad().name());
+
+            writer.write(linea);
+            writer.newLine();
+        } catch (IOException e) {
+            System.err.println("Error al guardar registro: " + e.getMessage());
+        }
+    }
+
+    public static void eliminarRegistroDelArchivo(Ayudante ayudante, String ramo, RegistroHoras registro) { //elimina un registro especifico del archivo
+        Path archivo = getRutaArchivo(ayudante.getMatricula());
+        if (!Files.exists(archivo)) return;
+
         try {
-            LocalDate fecha = LocalDate.parse(partes[0]);
-            String ramo = partes[1];
-            double horas = Double.parseDouble(partes[2]);
+            List<String> lineas = Files.readAllLines(archivo);
+            String target = String.format("%s,%s,%.2f,%s",
+                    registro.getFecha(),
+                    ramo,
+                    registro.getCantidad(),
+                    registro.getTipoActividad().name());
 
-            Ayudantia ayudantia = ayudante.getAyudantias().stream()
-                    .filter(a -> a.getNombreRamo().equalsIgnoreCase(ramo))
-                    .findFirst()
-                    .orElse(null);
-
-            if (ayudantia == null) {
-                ayudantia = new Ayudantia(ramo);
-                ayudante.agregarAyudantia(ayudantia);
+            // CAMBIO: elimina solo esa línea exacta
+            boolean eliminado = lineas.removeIf(linea -> linea.trim().equals(target));
+            if (eliminado) {
+                Files.write(archivo, lineas);
             }
 
-            ayudantia.getRegistrosHoras().add(new RegistroHoras(fecha, horas));
-            ayudante.registrarHoras(ramo, 0); // evitar duplicar
-            ayudante.registrarHoras(ramo, horas);
-        } catch (Exception e) {
-            System.out.println("Error al procesar linea de historial");
-        }
-    }
-
-    private static void escribirLinea(Ayudante ayudante, String linea) {
-        String archivo = "historial_" + ayudante.getMatricula() + ".txt";
-        try (BufferedWriter escritor = new BufferedWriter(new FileWriter(archivo, true))) {
-            escritor.write(linea);
-            escritor.newLine();
         } catch (IOException e) {
-            System.out.println("Error al guardar historial: " + e.getMessage());
+            System.err.println("Error al eliminar registro: " + e.getMessage());
         }
     }
 
-    private static void reemplazarArchivo(Ayudante ayudante, List<String> nuevasLineas) {
-        String archivo = "historial_" + ayudante.getMatricula() + ".txt";
-        File original = new File(archivo);
-        File temporal = new File(archivo + ".tmp");
+    public static void eliminarAyudantiaDelArchivo(Ayudante ayudante, String ramo) { //elimina todas las entradas de una ayudantia especifica
+        Path archivo = getRutaArchivo(ayudante.getMatricula());
+        if (!Files.exists(archivo)) return;
 
-        try (BufferedWriter escritor = new BufferedWriter(new FileWriter(temporal))) {
-            for (String linea : nuevasLineas) {
-                escritor.write(linea);
-                escritor.newLine();
+        try {
+            List<String> lineas = Files.readAllLines(archivo);
+            lineas.removeIf(linea -> linea.split(",")[1].equalsIgnoreCase(ramo));
+            Files.write(archivo, lineas);
+        } catch (IOException e) {
+            System.err.println("Error al eliminar ayudantía: " + e.getMessage());
+        }
+    }
+
+
+
+    public static void mostrarHistorialPagos(Ayudante ayudante, double valorHora) { //muestra por consola el historial y pago estimado de un ayudante
+        System.out.println("\n📜 Historial de horas:");
+        for (Ayudantia a : ayudante.getAyudantias()) {
+            System.out.println("\n" + a.getNombreRamo());
+            for (RegistroHoras rh : a.getRegistrosHoras()) {
+                System.out.println(" - " + rh);
             }
-        } catch (IOException e) {
-            System.out.println("Error al escribir archivo temporal");
-            return;
         }
 
-        if (!original.delete() || !temporal.renameTo(original)) {
-            System.out.println("Error al sobrescribir el archivo original");
+        System.out.printf("\n💰 Total Horas: %.2f | Pago Estimado: $%.0f\n",
+                ayudante.getHorasTotales(),
+                ayudante.calcularPago(valorHora));
+    }
+
+    private static Path getRutaArchivo(String matricula) {
+        return Paths.get(CARPETA_BASE, matricula + ".txt");
+    }
+
+    private static Ayudantia buscarOcrearAyudantia(Ayudante ayudante, String nombreRamo) {
+        for (Ayudantia a : ayudante.getAyudantias()) {
+            if (a.getNombreRamo().equalsIgnoreCase(nombreRamo)) {
+                return a;
+            }
         }
+        Ayudantia nueva = new Ayudantia(nombreRamo);
+        ayudante.agregarAyudantia(nueva);
+        return nueva;
     }
 
-    private static double mostrarTablaPagos(List<String[]> registros, double valorPorHora) {
-        double total = 0;
 
-        System.out.println("========== Historial de Pagos ==========");
-        System.out.printf("%-12s | %-15s | %-8s | %-8s%n", "Fecha", "Ramo", "Horas", "Pago");
-        System.out.println("--------------------------------------------");
-
-        for (String[] partes : registros) {
-            String fecha = partes[0];
-            String ramo = partes[1];
-            double horas = Double.parseDouble(partes[2]);
-            double pago = horas * valorPorHora;
-            total += pago;
-
-            System.out.printf("%-12s | %-15s | %-8.2f | $%-8.2f%n", fecha, ramo, horas, pago);
-        }
-
-        return total;
-    }
-
-    private static void mostrarTotalPagado(double total) {
-        System.out.println("--------------------------------------------");
-        System.out.printf("Total de pagos: $%.2f%n", total);
-    }
 
 
 }
