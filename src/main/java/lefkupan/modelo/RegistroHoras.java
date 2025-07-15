@@ -5,9 +5,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class RegistroHoras { //registro de horas trabajadas en una fecha específica
-    private LocalDate fecha;
-    private double cantidad;
-    private TipoActividad tipoActividad; //CAMBIO: uso de enum en vez de String
+    private final LocalDate fecha;
+    private final double cantidad;
+    private final TipoActividad tipoActividad; //CAMBIO: uso de enum en vez de String
 
     public RegistroHoras(LocalDate fecha, double cantidad, TipoActividad tipoActividad) { //constructor de RegistroHoras
         if (cantidad <= 0) {
