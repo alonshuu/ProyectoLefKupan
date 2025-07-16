@@ -13,7 +13,7 @@ import java.util.Scanner;
 
 public class Menu { //clase que gestiona el menu y la interaccion con el usuario desde consola
     private final Scanner scanner;
-    private ControladorHoras controlador;
+    private final ControladorHoras controlador;
 
     public Menu(ControladorHoras controlador) {
         this.controlador = controlador;
@@ -32,7 +32,7 @@ public class Menu { //clase que gestiona el menu y la interaccion con el usuario
             System.out.println("0. Salir");
             System.out.println("Selecciona una opcion");
 
-            opcion = solicitarNumero();
+            opcion = solicitarNumeroEntero();
 
             switch (opcion) {
                 case 1: registrarHoras(); break; //CAMBIO: menu modularizado
@@ -50,7 +50,7 @@ public class Menu { //clase que gestiona el menu y la interaccion con el usuario
         System.out.println("\n --- Registro de horas --- ");
         String ramo = solicitarTexto("Nombre del ramo: ");
         LocalDate fecha = solicitarFecha("Fecha (YYYY-MM-DD): ");
-        double horas = solicitarNumero("Cantidad de horas trabajadas: ");
+        double horas = solicitarNumero("Cantidad de horas: ");
         TipoActividad tipo = solicitarTipoActividad(); //CAMBIO: uso de enum en vez de texto libre
 
         controlador.registrarHoras(ramo, fecha, horas, tipo);
@@ -107,10 +107,6 @@ public class Menu { //clase que gestiona el menu y la interaccion con el usuario
     private String solicitarTexto(String mensaje) {
         System.out.print(mensaje + " ");
         return scanner.nextLine();
-    }
-
-    private double solicitarNumero() {
-        return solicitarNumero("Ingrese un numero: ");
     }
 
     private double solicitarNumero(String mensaje) {
