@@ -1,197 +1,178 @@
 package lefkupan.vista;
 
 import lefkupan.controlador.ControladorHoras;
-import lefkupan.controlador.ControladorLogin;
-import lefkupan.modelo.Ayudante;
 import lefkupan.modelo.Ayudantia;
 import lefkupan.modelo.HistorialTxt;
 import lefkupan.modelo.RegistroHoras;
+import lefkupan.modelo.TipoActividad;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Scanner;
 
-public class Menu {
+public class Menu { //clase que gestiona el menu y la interaccion con el usuario desde consola
     private final Scanner scanner;
-    private Ayudante ayudanteActual;
-    private ControladorHoras controladorHoras;
+    private ControladorHoras controlador;
 
-    public Menu() {
-        scanner = new Scanner(System.in);
+    public Menu(ControladorHoras controlador) {
+        this.controlador = controlador;
+        this.scanner = new Scanner(System.in);
     }
 
-    public void mostrarMenuPrincipal() {
-        login();
-        HistorialTxt.cargarHistorial(ayudanteActual);
+    public void mostrarMenuPrincipal() { //muestra el menu principal de opciones
+        int opcion;
+        do {
+            System.out.println("\n----- Menu Principal -----");
+            System.out.println("1. Registrar horas");
+            System.out.println("2. Ver resumen de ayudantias");
+            System.out.println("3. Eliminar ayudantia");
+            System.out.println("4. Eliminar registro especifico");
+            System.out.println("5. Ver historial y pago estimado");
+            System.out.println("0. Salir");
+            System.out.println("Selecciona una opcion");
 
-        boolean salir = false;
-        while (!salir) {
-            imprimirMenu();
-            int opcion = leerOpcion();
-            salir = ejecutarOpcion(opcion);
-        }
-    }
+            opcion = solicitarNumero();
 
-    private void login() {
-        System.out.println("=== LOGIN DE AYUDANTE ===");
-
-        while (true) {
-            System.out.print("Ingrese matricula: ");
-            String matricula = scanner.nextLine();
-
-            System.out.print("Ingrese contraseña: ");
-            String contrasena = scanner.nextLine();
-
-            Ayudante ayudante = ControladorLogin.autenticar(matricula, contrasena);
-
-            if (ayudante != null) {
-                System.out.println("Inicio de sesión exitoso!");
-                ayudanteActual = ayudante;
-                controladorHoras = new ControladorHoras(ayudante);
-                break;
-            } else {
-                System.out.println("Error. Intente de nuevo");
+            switch (opcion) {
+                case 1: registrarHoras(); break; //CAMBIO: menu modularizado
+                case 2: controlador.mostrarDetalleAyudantias(); break;
+                case 3: eliminarAyudantia(); break;
+                case 4: eliminarRegistroEspecifico(); break;
+                case 5: HistorialTxt.mostrarHistorialPagos(controlador.getAyudante(), solicitarValorHora()); break;
+                case 0: System.out.println("Hasta luego");
+                default: System.out.println("Opcion invalida");
             }
-        }
-    }
-
-    private void imprimirMenu() {
-        System.out.println("\n===============================");
-        System.out.println(" SISTEMA DE REGISTRO DE HORAS ");
-        System.out.println("===============================");
-        System.out.println("1. Registrar horas trabajadas");
-        System.out.println("2. Ver resumen de horas y pago");
-        System.out.println("3. Eliminar ayudantia");
-        System.out.println("4. Eliminar un registro especifico: ");
-        System.out.println("5. Ver historial de pagos");
-        System.out.println("6. Salir");
-        System.out.print("Selecciona una opcion: ");
-    }
-
-    private int leerOpcion() {
-        try {
-            return Integer.parseInt(scanner.nextLine());
-        } catch (NumberFormatException e) {
-            return -1;
-        }
-    }
-
-    private boolean ejecutarOpcion(int opcion) {
-        switch (opcion) {
-            case 1:
-                registrarHoras();
-                break;
-
-            case 2:
-                mostrarResumen();
-                break;
-
-            case 3:
-                eliminarAyudantia();
-                break;
-
-            case 4:
-                eliminarRegistroEspecifico();
-                break;
-
-            case 5:
-                verHistorialPagos();
-                break;
-
-            case 6: {
-                System.out.println("Adios");
-                return true;
-            }
-            default:
-                System.out.println("Opcion invalida. Intente de nuevo");
-        }
-        return false;
+        } while (opcion !=0);
     }
 
     private void registrarHoras() {
-        String ramo = solicitarTexto("Ingrese el nombre del ramo: ");
-        double horas = solicitarNumero("Ingrese la cantidad de horas: ");
-        controladorHoras.registrarHoras(ramo, horas);
-    }
+        System.out.println("\n --- Registro de horas --- ");
+        String ramo = solicitarTexto("Nombre del ramo: ");
+        LocalDate fecha = solicitarFecha("Fecha (YYYY-MM-DD): ");
+        double horas = solicitarNumero("Cantidad de horas trabajadas: ");
+        TipoActividad tipo = solicitarTipoActividad(); //CAMBIO: uso de enum en vez de texto libre
 
-    private void mostrarResumen() {
-        double valor = solicitarNumero("Ingrese el valor por hora: ");
-        controladorHoras.mostrarResumen(valor);
+        controlador.registrarHoras(ramo, fecha, horas, tipo);
+        System.out.println("Registro exitoso");
     }
 
     private void eliminarAyudantia() {
-        String ramo = solicitarTexto("Ingrese el nombre del ramo: ");
-        boolean eliminada = ayudanteActual.eliminarAyudantia(ramo);
-
-        if (eliminada) {
-            HistorialTxt.eliminarAyudantiaDelArchivo(ayudanteActual, ramo);
-            ayudanteActual.recalcularHorasTotales();
-            System.out.println("Ayudantia eliminada correctamente");
+        String ramo = solicitarTexto("Nombre del ramo a eliminar: ");
+        boolean ok = controlador.eliminarAyudantia(ramo);
+        if (ok) {
+            System.out.println("Ayudantia eliminada");
         } else {
             System.out.println("No se encontro la ayudantia");
         }
     }
 
     private void eliminarRegistroEspecifico() {
-        String ramo = solicitarTexto("Ingrese el nombre del ramo: ");
-        Ayudantia ayudantia = buscarAyudantia(ramo);
-        if (ayudantia == null || ayudantia.getRegistrosHoras().isEmpty()) {
-            System.out.println("No hay registros");
+        List<Ayudantia> ayudantias = controlador.getAyudante().getAyudantias();
+        if (ayudantias.isEmpty()) {
+            System.out.println("No hay ayudantias disponibles");
             return;
         }
 
-        mostrarRegistros(ayudantia);
-        int index = solicitarIndice(ayudantia.getRegistrosHoras().size());
-        if (index == -1) return;
+        System.out.println("Selecciona una ayudantia:");
+        for (int i = 0; i < ayudantias.size(); i++) {
+            System.out.printf("%d. %s\n", i + 1, ayudantias.get(i).getNombreRamo());
+        }
 
-        RegistroHoras eliminado = ayudantia.getRegistrosHoras().remove(index);
-        ayudanteActual.recalcularHorasTotales();
-        HistorialTxt.eliminarRegistroDelArchivo(ayudanteActual, ramo, eliminado);
-        System.out.println("Registro eliminado correctamente");
-    }
+        int indice = solicitarIndice(ayudantias.size());
+        Ayudantia seleccionada = ayudantias.get(indice - 1);
 
-    private void verHistorialPagos() {
-        double valor = solicitarNumero("Ingrese el valor por hora: ");
-        HistorialTxt.mostrarHistorialPagos(ayudanteActual, valor);
+        List<RegistroHoras> registros = seleccionada.getRegistrosHoras();
+        if (registros.isEmpty()) {
+            System.out.println("No hay registros en esta ayudantia.");
+            return;
+        }
+
+        System.out.println("Selecciona un registro para eliminar: ");
+        for (int i = 0; i < registros.size(); i++) {
+            System.out.printf("%d. %s\n", i + 1, registros.get(i));
+        }
+
+        int indiceRegistro = solicitarIndice(registros.size());
+        RegistroHoras registro = registros.get(indiceRegistro - 1);
+
+        boolean ok = controlador.eliminarRegistroEspecifico(seleccionada.getNombreRamo(), registro);
+        if (ok) {
+            System.out.println("Registro eliminado");
+        } else {
+            System.out.println("No se pudo eliminar el registro");
+        }
     }
 
     private String solicitarTexto(String mensaje) {
-        System.out.print(mensaje);
+        System.out.print(mensaje + " ");
         return scanner.nextLine();
     }
 
+    private double solicitarNumero() {
+        return solicitarNumero("Ingrese un numero: ");
+    }
+
     private double solicitarNumero(String mensaje) {
-        System.out.print(mensaje);
-        try {
-            return Double.parseDouble(scanner.nextLine());
-        } catch (NumberFormatException e) {
-            System.out.println("Entrada invalida");
-            return 0;
+        while (true) {
+            try {
+                System.out.print(mensaje + " ");
+                return Double.parseDouble(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Ingrese un numero valido");
+            }
         }
     }
 
-    private Ayudantia buscarAyudantia(String ramo) {
-        return ayudanteActual.getAyudantias().stream()
-                .filter(a -> a.getNombreRamo().equalsIgnoreCase(ramo))
-                .findFirst()
-                .orElse(null);
-    }
-
-    private void mostrarRegistros(Ayudantia ayudantia) {
-        System.out.println("Registros disponibles:");
-        List<RegistroHoras> registros = ayudantia.getRegistrosHoras();
-        for (int i = 0; i < registros.size(); i++) {
-            System.out.println("[" + (i + 1) + "] " + registros.get(i));
+    private LocalDate solicitarFecha(String mensaje) {
+        while (true) {
+            try {
+                System.out.print(mensaje + " ");
+                return LocalDate.parse(scanner.nextLine());
+            } catch (DateTimeParseException e) {
+                System.out.println("Formato de fecha invalido");
+            }
         }
     }
 
-    private int solicitarIndice(int size) {
-        System.out.print("Seleccione un registro: ");
-        try {
-            int seleccion = Integer.parseInt(scanner.nextLine()) - 1;
-            if (seleccion >= 0 && seleccion < size) return seleccion;
-        } catch (NumberFormatException ignored) {}
-        System.out.println("Indice invalido");
-        return -1;
+    private TipoActividad solicitarTipoActividad() {
+        System.out.println("Selecciona tipo de actividad: ");
+        TipoActividad[] tipos = TipoActividad.values();
+        for (int i = 0; i < tipos.length; i++) {
+            System.out.printf("%d. %s\n", i + 1, tipos[i]);
+        }
+        int opcion = solicitarIndice(tipos.length);
+        return tipos[opcion - 1]; // CAMBIO: retorno seguro desde enum
     }
+
+    private int solicitarIndice(int max) {
+        int valor;
+        do {
+            System.out.print("Selecciona opcion (1-" + max + "): ");
+            valor = solicitarNumeroEntero();
+        } while (valor < 1 || valor > max);
+        return valor;
+    }
+
+    private int solicitarNumeroEntero() {
+        while (true) {
+            try {
+                return Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Ingrese un numero entero valido");
+            }
+        }
+    }
+
+    private double solicitarValorHora() {
+        return solicitarNumero("Ingrese valor por hora: ");
+    }
+
+
+
+
+
+
+
 }
 
