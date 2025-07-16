@@ -52,11 +52,10 @@ public class LoginGUI { //ventana de inicio de sesion para el sistema
 
             Object usuario = ControladorLogin.autenticar(matricula, contrasena);
 
-            if (usuario instanceof Ayudante ayudante) {// Abrir menú ayudante
+            if (usuario instanceof Ayudante ayudante) { //abrir menu ayudante
                 dispose();
                 new MenuAyudanteGUI(new ControladorHoras(ayudante));
-            } else if (usuario instanceof Administrador administrador) {
-                // Abrir menú administrador
+            } else if (usuario instanceof Administrador administrador) { // abrir menu administrador
                 dispose();
                 new MenuAdministradorGUI(administrador);
             } else {
@@ -71,6 +70,5 @@ public class LoginGUI { //ventana de inicio de sesion para el sistema
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new LoginGUI().setVisible(true));
     }
-
 
 }
