@@ -1,6 +1,6 @@
 package lefkupan.controlador;
 
-import lefkupan.persistencia.UsuarioJsonRepositorio;
+import lefkupan.modelo.persistencia.UsuarioJsonRepositorio;
 
 public class ControladorLogin { //encargada de autenticar a los usuarios a partir del archivo usuarios.txt
 

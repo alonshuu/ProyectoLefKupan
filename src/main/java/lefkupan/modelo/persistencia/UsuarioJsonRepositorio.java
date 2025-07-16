@@ -1,4 +1,4 @@
-package lefkupan.persistencia;
+package lefkupan.modelo.persistencia;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

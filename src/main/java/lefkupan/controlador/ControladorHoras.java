@@ -3,7 +3,7 @@ package lefkupan.controlador;
 import lefkupan.modelo.dominio.Ayudantia;
 import lefkupan.modelo.dominio.RegistroHoras;
 import lefkupan.modelo.dominio.TipoActividad;
-import lefkupan.persistencia.HistorialJson;
+import lefkupan.modelo.persistencia.HistorialJson;
 import lefkupan.modelo.usuario.Ayudante;
 
 import java.time.LocalDate;

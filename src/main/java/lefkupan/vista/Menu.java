@@ -2,7 +2,7 @@ package lefkupan.vista;
 
 import lefkupan.controlador.ControladorHoras;
 import lefkupan.modelo.dominio.Ayudantia;
-import lefkupan.persistencia.HistorialTxt;
+import lefkupan.modelo.persistencia.HistorialTxt;
 import lefkupan.modelo.dominio.RegistroHoras;
 import lefkupan.modelo.dominio.TipoActividad;
 

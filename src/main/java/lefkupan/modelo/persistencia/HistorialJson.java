@@ -1,10 +1,9 @@
-package lefkupan.persistencia;
+package lefkupan.modelo.persistencia;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import lefkupan.modelo.dominio.RegistroHoras;
 import lefkupan.modelo.dominio.Ayudantia;
-import lefkupan.modelo.usuario.Administrador;
 import lefkupan.modelo.usuario.Ayudante;
 import lefkupan.modelo.dominio.TipoActividad;
 import com.google.gson.GsonBuilder;
