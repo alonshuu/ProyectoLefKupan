@@ -3,6 +3,7 @@ package lefkupan.controlador;
 import lefkupan.modelo.dominio.Ayudantia;
 import lefkupan.modelo.dominio.RegistroHoras;
 import lefkupan.modelo.dominio.TipoActividad;
+import lefkupan.persistencia.HistorialJson;
 import lefkupan.persistencia.HistorialTxt;
 import lefkupan.modelo.usuario.Ayudante;
 
@@ -24,14 +25,14 @@ public class ControladorHoras { //maneja el registro y consulta de horas para un
        Ayudantia ayudantia = buscarOcrearAyudantia(nombreRamo);
        ayudantia.agregarHoras(fecha, horas, tipoActividad);
 
-       RegistroHoras registro = new RegistroHoras(fecha, horas, tipoActividad);
-       HistorialTxt.guardarRegistro(ayudante,nombreRamo, registro);
+       //CAMBIO:guardar despues de agregar
+        HistorialJson.guardarHistorial(ayudante);
     }
 
     public boolean eliminarAyudantia(String nombreRamo) {
         boolean eliminada = ayudante.eliminarAyudantia(nombreRamo);
         if (eliminada) {
-            HistorialTxt.eliminarAyudantiaDelArchivo(ayudante, nombreRamo);
+            HistorialJson.guardarHistorial(ayudante);
         }
         return eliminada;
     }
@@ -41,7 +42,7 @@ public class ControladorHoras { //maneja el registro y consulta de horas para un
             if (ayudantia.getNombreRamo().equals(nombreRamo)) {
                 boolean ok = ayudantia.eliminarRegistro(registro.getFecha(), registro.getCantidad());
                 if (ok) {
-                    HistorialTxt.eliminarRegistroDelArchivo(ayudante, nombreRamo, registro);
+                    HistorialJson.guardarHistorial(ayudante);
                 }
                 return ok;
             }

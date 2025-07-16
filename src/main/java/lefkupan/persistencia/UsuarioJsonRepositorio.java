@@ -63,7 +63,9 @@ public class UsuarioJsonRepositorio { //repositorio para cargar y guardar usuari
                 if ("ADMINISTRADOR".equalsIgnoreCase(rol)) {
                     return new Administrador(matricula);
                 } else {
-                    return new Ayudante(matricula, contrasena);
+                    Ayudante ayudantia = new Ayudante(matricula, contrasena);
+                    HistorialJson.cargarHistorial(ayudantia);
+                    return ayudantia;
                 }
             }
         }
