@@ -97,14 +97,12 @@ public class HistorialTxt { //cargar y guardar registros de horas en archivos .t
         }
     }
 
-
-
     public static void mostrarHistorialPagos(Ayudante ayudante, double valorHora) { //muestra por consola el historial y pago estimado de un ayudante
         System.out.println("\n Historial de horas:");
-        for (Ayudantia a : ayudante.getAyudantias()) {
-            System.out.println("\n" + a.getNombreRamo());
-            for (RegistroHoras rh : a.getRegistrosHoras()) {
-                System.out.println(" - " + rh);
+        for (Ayudantia ayudantia : ayudante.getAyudantias()) {
+            System.out.println("\n" + ayudantia.getNombreRamo());
+            for (RegistroHoras registrohoras : ayudantia.getRegistrosHoras()) {
+                System.out.println(" - " + registrohoras);
             }
         }
 
@@ -118,9 +116,9 @@ public class HistorialTxt { //cargar y guardar registros de horas en archivos .t
     }
 
     private static Ayudantia buscarOcrearAyudantia(Ayudante ayudante, String nombreRamo) {
-        for (Ayudantia a : ayudante.getAyudantias()) {
-            if (a.getNombreRamo().equalsIgnoreCase(nombreRamo)) {
-                return a;
+        for (Ayudantia ayudantia : ayudante.getAyudantias()) {
+            if (ayudantia.getNombreRamo().equalsIgnoreCase(nombreRamo)) {
+                return ayudantia;
             }
         }
         Ayudantia nueva = new Ayudantia(nombreRamo);
