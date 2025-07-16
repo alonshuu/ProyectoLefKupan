@@ -49,7 +49,7 @@ public class Menu { //clase que gestiona el menu y la interaccion con el usuario
     private void registrarHoras() {
         System.out.println("\n --- Registro de horas --- ");
         String ramo = solicitarTexto("Nombre del ramo: ");
-        LocalDate fecha = solicitarFecha("Fecha (YYYY-MM-DD): ");
+        LocalDate fecha = solicitarFecha();
         double horas = solicitarNumero("Cantidad de horas: ");
         TipoActividad tipo = solicitarTipoActividad(); //CAMBIO: uso de enum en vez de texto libre
 
@@ -120,10 +120,10 @@ public class Menu { //clase que gestiona el menu y la interaccion con el usuario
         }
     }
 
-    private LocalDate solicitarFecha(String mensaje) {
+    private LocalDate solicitarFecha() {
         while (true) {
             try {
-                System.out.print(mensaje + " ");
+                System.out.print("Fecha (YYYY-MM-DD): ");
                 return LocalDate.parse(scanner.nextLine());
             } catch (DateTimeParseException e) {
                 System.out.println("Formato de fecha invalido");
@@ -163,12 +163,5 @@ public class Menu { //clase que gestiona el menu y la interaccion con el usuario
     private double solicitarValorHora() {
         return solicitarNumero("Ingrese valor por hora: ");
     }
-
-
-
-
-
-
-
 }
 
