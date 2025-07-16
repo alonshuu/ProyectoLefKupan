@@ -1,11 +1,15 @@
 package lefkupan.vista;
 
+import lefkupan.vista.gui.AppGUI;
+
 public class Main { //clase principal que inicia el sistema.
     public static void main(String[] args) {
-        System.out.println("Bienvenido al sistema Lef Küpan - Registro Rapido"); //CAMBIO: interaccion inicial simple, modular y clara.
-
-        Menu menu = new Menu(); //se instancia el menu que maneja la logica de la vista por consola.
-
-        menu.mostrarMenuPrincipal(); //se llama al metodo mostrarMenuPrincipal() que gestiona el flujo completo del programa.
+        if (args.length > 0 && args[0].equalsIgnoreCase("cli")) {
+            System.out.println("Bienvenido al sistema Lef Küpan - Registro Rapido");
+            Menu menu = new Menu();
+            menu.mostrarMenuPrincipal();
+        } else {
+            AppGUI.launch();
+        }
     }
 }
