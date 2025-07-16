@@ -36,7 +36,7 @@ public class Menu { //clase que gestiona el menu y la interaccion con el usuario
 
             switch (opcion) {
                 case 1: registrarHoras(); break; //CAMBIO: menu modularizado
-                case 2: controlador.mostrarDetalleAyudantias(); break;
+                case 2: controlador.mostrarDetalleAyudantias(); controlador.mostrarEncabezadoResumen(); break;
                 case 3: eliminarAyudantia(); break;
                 case 4: eliminarRegistroEspecifico(); break;
                 case 5: HistorialTxt.mostrarHistorialPagos(controlador.getAyudante(), solicitarValorHora()); break;

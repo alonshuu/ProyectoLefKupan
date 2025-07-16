@@ -44,10 +44,6 @@ public class Ayudante { //representa un ayudante con su información de acceso y
         return matricula;
     }
 
-    public String getContrasena(){
-        return "****";
-    }
-
     public List<Ayudantia> getAyudantias() {
         return ayudantias;
     }

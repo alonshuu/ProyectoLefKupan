@@ -37,7 +37,7 @@ public class ControladorHoras { //maneja el registro y consulta de horas para un
             if (ayudantia.getNombreRamo().equals(nombreRamo)) {
                 boolean ok = ayudantia.eliminarRegistro(registro.getFecha(), registro.getCantidad());
                 if (ok) {
-                    HistorialTxt.eliminarAyudantiaDelArchivo(ayudante, nombreRamo, registro);
+                    HistorialTxt.eliminarRegistroDelArchivo(ayudante, nombreRamo, registro);
                 }
                 return ok;
             }
@@ -63,13 +63,6 @@ public class ControladorHoras { //maneja el registro y consulta de horas para un
                 System.out.println(" - " + registrohoras);
             }
         }
-    }
-
-    public void mostrarTotales(double valorHora) {
-        double totalHoras = ayudante.getHorasTotales();
-        double totalPago = ayudante.calcularPago(valorHora);
-
-        System.out.printf("\nTotal de Horas: %.2f | Pago estimado: $%.0f\n", totalHoras, totalPago);
     }
 
     private Ayudantia buscarOcrearAyudantia(String nombreRamo) {
