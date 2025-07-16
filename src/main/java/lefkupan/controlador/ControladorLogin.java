@@ -23,9 +23,9 @@ public class ControladorLogin { //encargada de autenticar a los usuarios a parti
                 String contrasenaGuardada = partes[1];
 
                 if(matriculaGuardada.equals(matricula) && contrasenaGuardada.equals(contrasena)) {
-                    Ayudante a = new Ayudante(matricula, contrasena);
-                    HistorialTxt.cargarHistorial(a);
-                    return a;
+                    Ayudante ayudantia = new Ayudante(matricula, contrasena);
+                    HistorialTxt.cargarHistorial(ayudantia);
+                    return ayudantia;
                 }
             }
         } catch (IOException e) {

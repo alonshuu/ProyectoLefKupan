@@ -33,9 +33,9 @@ public class ControladorHoras { //maneja el registro y consulta de horas para un
     }
 
     public boolean eliminarRegistroEspecifico(String nombreRamo, RegistroHoras registro) {
-        for (Ayudantia a : ayudante.getAyudantias()) {
-            if (a.getNombreRamo().equals(nombreRamo)) {
-                boolean ok = a.eliminarRegistro(registro.getFecha(), registro.getCantidad());
+        for (Ayudantia ayudantia : ayudante.getAyudantias()) {
+            if (ayudantia.getNombreRamo().equals(nombreRamo)) {
+                boolean ok = ayudantia.eliminarRegistro(registro.getFecha(), registro.getCantidad());
                 if (ok) {
                     HistorialTxt.eliminarAyudantiaDelArchivo(ayudante, nombreRamo, registro);
                 }
@@ -57,10 +57,10 @@ public class ControladorHoras { //maneja el registro y consulta de horas para un
             return;
         }
 
-        for (Ayudantia a : lista) {
-            System.out.println("\n" + a);
-            for (RegistroHoras rh : a.getRegistrosHoras()) {
-                System.out.println(" - " + rh);
+        for (Ayudantia ayudantia : lista) {
+            System.out.println("\n" + ayudantia);
+            for (RegistroHoras registrohoras : ayudantia.getRegistrosHoras()) {
+                System.out.println(" - " + registrohoras);
             }
         }
     }
@@ -73,9 +73,9 @@ public class ControladorHoras { //maneja el registro y consulta de horas para un
     }
 
     private Ayudantia buscarOcrearAyudantia(String nombreRamo) {
-        for (Ayudantia a : ayudante.getAyudantias()) {
-            if (a.getNombreRamo().equalsIgnoreCase(nombreRamo)) {
-                return a;
+        for (Ayudantia ayudantia : ayudante.getAyudantias()) {
+            if (ayudantia.getNombreRamo().equalsIgnoreCase(nombreRamo)) {
+                return ayudantia;
             }
         }
         Ayudantia nueva = new Ayudantia(nombreRamo);
