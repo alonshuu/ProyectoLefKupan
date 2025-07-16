@@ -9,19 +9,22 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.JFrame;
 
-public class LoginGUI { //ventana de inicio de sesion para el sistema
+public class LoginGUI extends JFrame { //ventana de inicio de sesion para el sistema
     private JTextField campoMatricula;
     private JPasswordField campoContrasena;
 
     public LoginGUI() {
         setTitle("Lef Küpan - Login");
-        setDefaultCloseOperacion(EXIT_ON_CLOSE);
-        setSize(350,220);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setSize(300,200);
         setLocationRelativeTo(null);
         setResizable(false);
 
         inicializarComponentes();
+
+        setVisible(true);
     }
 
     private void inicializarComponentes() {
@@ -48,7 +51,7 @@ public class LoginGUI { //ventana de inicio de sesion para el sistema
         @Override
         public void actionPerformed(ActionEvent e) {
             String matricula = campoMatricula.getText().trim();
-            String clave = new String(campoContrasena.getPassword()).trim();
+            String contrasena = new String(campoContrasena.getPassword()).trim();
 
             Object usuario = ControladorLogin.autenticar(matricula, contrasena);
 
@@ -68,7 +71,7 @@ public class LoginGUI { //ventana de inicio de sesion para el sistema
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new LoginGUI().setVisible(true));
+        SwingUtilities.invokeLater(() -> new LoginGUI());
     }
 
 }

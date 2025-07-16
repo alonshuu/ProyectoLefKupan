@@ -70,6 +70,26 @@ public class HistorialJson { //encargada de leer y guardar los historiales de ho
         }
     }
 
+    public static void mostrarHistorialPagos(Ayudante ayudante, double valorHora) {
+        System.out.println("\n===== HISTORIAL DE HORAS Y PAGO ESTIMADO =====");
+
+        double totalHoras = 0;
+
+        for (Ayudantia ayudantia : ayudante.getAyudantias()) {
+            System.out.println("\n Ramo: " + ayudantia.getNombreRamo());
+
+            for (RegistroHoras r : ayudantia.getRegistrosHoras()) {
+                System.out.printf(" - %s | %.2f hrs | %s\n",
+                        r.getFecha(), r.getCantidad(), r.getTipoActividad());
+                totalHoras += r.getCantidad();
+            }
+        }
+
+        double totalPago = totalHoras * valorHora;
+        System.out.printf("\nTotal horas: %.2f\nPago estimado: $%.0f\n", totalHoras, totalPago);
+    }
+
+
     private static class RegistroSerializable {
         LocalDate fecha;
         double cantidad;
