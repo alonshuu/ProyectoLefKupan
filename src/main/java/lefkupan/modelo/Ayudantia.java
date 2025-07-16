@@ -33,8 +33,8 @@ public class Ayudantia{ //clase que representa una ayudantía con múltiples reg
     public boolean eliminarRegistro(LocalDate fecha, double cantidad) { //elimina un registro de horas especifico por fecha y cantidad
         Iterator<RegistroHoras> it = registrosHoras.iterator();
         while (it.hasNext()) {
-            RegistroHoras rh= it.next();
-            if (rh.getFecha().isEqual(fecha) && rh.getCantidad() == cantidad) {
+            RegistroHoras registrohoras= it.next();
+            if (registrohoras.getFecha().isEqual(fecha) && registrohoras.getCantidad() == cantidad) {
                 it.remove();
                 return true;
             }

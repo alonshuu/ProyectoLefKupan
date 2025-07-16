@@ -27,7 +27,7 @@ public class Ayudante { //representa un ayudante con su información de acceso y
     }
 
     public boolean eliminarAyudantia(String nombreRamo) { //elimina una ayudantia especifica por nombre
-        return ayudantias.removeIf(a -> a.getNombreRamo().equalsIgnoreCase(nombreRamo));
+        return ayudantias.removeIf(ayudantia -> ayudantia.getNombreRamo().equalsIgnoreCase(nombreRamo));
     }
 
     public double getHorasTotales() { //obtiene el total de horas trabajadas entre todas las ayudantias
