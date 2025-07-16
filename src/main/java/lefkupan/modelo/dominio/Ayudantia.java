@@ -1,4 +1,4 @@
-package lefkupan.modelo;
+package lefkupan.modelo.dominio;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

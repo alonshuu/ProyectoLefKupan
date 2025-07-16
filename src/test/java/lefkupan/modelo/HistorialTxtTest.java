@@ -1,5 +1,6 @@
 package lefkupan.modelo;
 
+import lefkupan.modelo.usuario.Ayudante;
 import org.junit.jupiter.api.Test;
 import java.nio.file.Files;
 import java.nio.file.Path;

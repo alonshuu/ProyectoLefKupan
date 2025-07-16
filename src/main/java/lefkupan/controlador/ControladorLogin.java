@@ -1,6 +1,6 @@
 package lefkupan.controlador;
 
-import lefkupan.modelo.Ayudante;
+import lefkupan.modelo.usuario.Ayudante;
 import lefkupan.modelo.HistorialTxt;
 
 import java.io.*;

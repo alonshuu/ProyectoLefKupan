@@ -2,7 +2,7 @@ package lefkupan.vista;
 
 import lefkupan.controlador.ControladorLogin;
 import lefkupan.controlador.ControladorHoras;
-import lefkupan.modelo.Ayudante;
+import lefkupan.modelo.usuario.Ayudante;
 
 import java.util.Scanner;
 

@@ -1,6 +1,10 @@
 package lefkupan.controlador;
 
 import lefkupan.modelo.*;
+import lefkupan.modelo.dominio.Ayudantia;
+import lefkupan.modelo.dominio.RegistroHoras;
+import lefkupan.modelo.dominio.TipoActividad;
+import lefkupan.modelo.usuario.Ayudante;
 
 import java.time.LocalDate;
 import java.util.List;

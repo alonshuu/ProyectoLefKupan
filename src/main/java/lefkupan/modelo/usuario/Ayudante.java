@@ -1,4 +1,6 @@
-package lefkupan.modelo;
+package lefkupan.modelo.usuario;
+
+import lefkupan.modelo.dominio.Ayudantia;
 
 import java.util.ArrayList;
 import java.util.List;

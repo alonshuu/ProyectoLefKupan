@@ -1,10 +1,10 @@
 package lefkupan.vista;
 
 import lefkupan.controlador.ControladorHoras;
-import lefkupan.modelo.Ayudantia;
+import lefkupan.modelo.dominio.Ayudantia;
 import lefkupan.modelo.HistorialTxt;
-import lefkupan.modelo.RegistroHoras;
-import lefkupan.modelo.TipoActividad;
+import lefkupan.modelo.dominio.RegistroHoras;
+import lefkupan.modelo.dominio.TipoActividad;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;

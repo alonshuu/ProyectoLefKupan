@@ -1,5 +1,7 @@
 package lefkupan.modelo;
 
+import lefkupan.modelo.dominio.Ayudantia;
+import lefkupan.modelo.usuario.Ayudante;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
