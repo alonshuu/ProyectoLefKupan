@@ -1,4 +1,4 @@
-package lefkupan.modelo;
+package lefkupan.persistencia;
 
 import lefkupan.modelo.dominio.Ayudantia;
 import lefkupan.modelo.dominio.RegistroHoras;

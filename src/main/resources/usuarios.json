@@ -1,0 +1,13 @@
+[
+  {
+    "matricula": "21645082523",
+    "contrasena": "12345",
+    "rol": "AYUDANTE"
+  },
+
+  {
+    "matricula": "admin",
+    "contrasena": "admin",
+    "rol": "ADMINISTRADOR"
+  }
+]
