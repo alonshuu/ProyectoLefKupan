@@ -7,6 +7,7 @@ import lefkupan.modelo.dominio.Ayudantia;
 import lefkupan.modelo.usuario.Administrador;
 import lefkupan.modelo.usuario.Ayudante;
 import lefkupan.modelo.dominio.TipoActividad;
+import com.google.gson.GsonBuilder;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -17,7 +18,10 @@ import java.util.*;
 public class HistorialJson { //encargada de leer y guardar los historiales de horas de los ayudantes desde archivos JSON
 
     private static final String CARPETA = "data";
-    private static final Gson gson = new Gson();
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+            .create();
+
 
     public static void cargarHistorial(Ayudante ayudante) { //carga el historial desde data/{matricula}.json y lo asigna al ayudante
         Path archivo = Paths.get(CARPETA, ayudante.getMatricula() + ".json");
