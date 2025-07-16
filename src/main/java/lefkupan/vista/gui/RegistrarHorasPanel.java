@@ -15,28 +15,61 @@ class RegistrarHorasPanel extends JPanel {
 
     private void init() {
         setLayout(new GridBagLayout());
-        setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
+        setBackground(Color.WHITE);
+        setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
+
         GridBagConstraints c = new GridBagConstraints();
-        c.insets = new Insets(5,5,5,5);
+        c.insets = new Insets(10, 0, 10, 0);
         c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.weightx = 1.0;
+
+
+        JLabel ramoLabel = new JLabel("Nombre del ramo");
+        ramoLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        ramoLabel.setForeground(Color.DARK_GRAY);
+        c.gridy = 0;
+        add(ramoLabel, c);
 
         ramoField = new JTextField(15);
+        ramoField.setPreferredSize(new Dimension(200, 30));
+        GuiUtils.addPlaceholder(ramoField, "Ej: Cálculo 2");
+        c.gridy = 1;
+        add(ramoField, c);
+
+
+        JLabel horasLabel = new JLabel("Cantidad de horas");
+        horasLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        horasLabel.setForeground(Color.DARK_GRAY);
+        c.gridy = 2;
+        add(horasLabel, c);
+
         horasField = new JTextField(15);
-        GuiUtils.addPlaceholder(ramoField, "Nombre del ramo");
-        GuiUtils.addPlaceholder(horasField, "Cantidad de horas");
+        horasField.setPreferredSize(new Dimension(200, 30));
+        GuiUtils.addPlaceholder(horasField, "Ej: 3.5");
+        c.gridy = 3;
+        add(horasField, c);
+
 
         JButton registrar = new JButton("Registrar");
+        registrar.setBackground(new Color(33, 150, 243));
+        registrar.setForeground(Color.WHITE);
+        registrar.setFocusPainted(false);
+        registrar.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        registrar.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         registrar.addActionListener(e -> registrarHoras());
-        JButton volver = new JButton("Volver");
-        volver.addActionListener(e -> app.mostrar("menu"));
-
-        c.gridy = 0;
-        add(ramoField, c);
-        c.gridy = 1;
-        add(horasField, c);
-        c.gridy = 2;
+        c.gridy = 4;
         add(registrar, c);
-        c.gridy = 3;
+
+
+        JButton volver = new JButton("Volver");
+        volver.setBackground(new Color(200, 200, 200));
+        volver.setForeground(Color.BLACK);
+        volver.setFocusPainted(false);
+        volver.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        volver.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
+        volver.addActionListener(e -> app.mostrar("menu"));
+        c.gridy = 5;
         add(volver, c);
     }
 
@@ -46,8 +79,8 @@ class RegistrarHorasPanel extends JPanel {
             double horas = Double.parseDouble(horasField.getText());
             app.getControladorHoras().registrarHoras(ramo, horas);
             JOptionPane.showMessageDialog(this, "Horas registradas");
-            ramoField.setText("Nombre del ramo");
-            horasField.setText("Cantidad de horas");
+            ramoField.setText("");
+            horasField.setText("");
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Horas inválidas", "Error", JOptionPane.ERROR_MESSAGE);
         }

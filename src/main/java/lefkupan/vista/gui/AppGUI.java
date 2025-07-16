@@ -19,13 +19,24 @@ public class AppGUI extends JFrame {
 
     public AppGUI() {
         super("Lef Küpan");
+
+
         FlatLightLaf.setup();
+        UIManager.put("TextComponent.arc", 15);
+        UIManager.put("Button.arc", 20);
+        UIManager.put("Component.focusWidth", 1);
+        UIManager.put("Component.innerFocusWidth", 0);
+        UIManager.put("TitlePane.unifiedBackground", true);
+        UIManager.put("TitlePane.background", new Color(245, 245, 245));
+
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400, 300);
+        setSize(480, 420);  // Tamaño más moderno
         setLocationRelativeTo(null);
 
         cards = new CardLayout();
         container = new JPanel(cards);
+        container.setBackground(Color.WHITE); // Fondo uniforme estilo web
+
 
         container.add(new LoginPanel(this), "login");
         container.add(new MenuPanel(this), "menu");
@@ -69,7 +80,10 @@ public class AppGUI extends JFrame {
             HistorialTxt.cargarHistorial(a);
             mostrar("menu");
         } else {
-            JOptionPane.showMessageDialog(this, "Credenciales inválidas", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "Credenciales inválidas",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 }

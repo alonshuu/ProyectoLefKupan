@@ -17,17 +17,32 @@ class EliminarRegistroPanel extends JPanel {
     }
 
     private void init() {
-        setLayout(new BorderLayout(10,10));
-        setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
+        setLayout(new BorderLayout(15, 15));
+        setBackground(Color.WHITE);
+        setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
+
         listPanel = new JPanel();
         listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
-        JScrollPane scroll = new JScrollPane(listPanel);
+        listPanel.setBackground(Color.WHITE);
 
+        JScrollPane scroll = new JScrollPane(listPanel);
+        scroll.setBorder(null);
+        add(scroll, BorderLayout.CENTER);
+
+        // Botón volver
         JButton volver = new JButton("Volver");
+        volver.setBackground(new Color(200, 200, 200));
+        volver.setForeground(Color.BLACK);
+        volver.setFocusPainted(false);
+        volver.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        volver.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
         volver.addActionListener(e -> app.mostrar("menu"));
 
-        add(scroll, BorderLayout.CENTER);
-        add(volver, BorderLayout.SOUTH);
+        JPanel bottom = new JPanel();
+        bottom.setLayout(new BoxLayout(bottom, BoxLayout.Y_AXIS));
+        bottom.setBackground(Color.WHITE);
+        bottom.add(volver);
+        add(bottom, BorderLayout.SOUTH);
     }
 
     @Override
@@ -40,18 +55,39 @@ class EliminarRegistroPanel extends JPanel {
         listPanel.removeAll();
         for (Ayudantia a : app.getAyudante().getAyudantias()) {
             for (RegistroHoras r : a.getRegistrosHoras()) {
-                JPanel p = new JPanel();
-                p.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-                p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
-                p.add(new JLabel("Ramo: " + a.getNombreRamo()));
-                p.add(new JLabel("Fecha: " + r.getFecha()));
-                p.add(new JLabel("Horas: " + r.getCantidad()));
-                JButton eliminar = new JButton("Eliminar");
+                JPanel tarjeta = new JPanel();
+                tarjeta.setLayout(new BoxLayout(tarjeta, BoxLayout.Y_AXIS));
+                tarjeta.setBackground(new Color(245, 245, 245));
+                tarjeta.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(new Color(210, 210, 210)),
+                        BorderFactory.createEmptyBorder(10, 10, 10, 10)
+                ));
+
+                JLabel ramo = new JLabel("📘 Ramo: " + a.getNombreRamo());
+                JLabel fecha = new JLabel("📅 Fecha: " + r.getFecha());
+                JLabel horas = new JLabel("⏱ Horas: " + r.getCantidad());
+
+                JButton eliminar = new JButton("Eliminar registro");
+                eliminar.setBackground(new Color(244, 67, 54)); // rojo
+                eliminar.setForeground(Color.WHITE);
+                eliminar.setFocusPainted(false);
+                eliminar.setFont(new Font("Segoe UI", Font.BOLD, 13));
+                eliminar.setBorder(BorderFactory.createEmptyBorder(6, 16, 6, 16));
                 eliminar.addActionListener(e -> eliminarRegistro(a, r));
-                p.add(eliminar);
-                listPanel.add(p);
+
+                tarjeta.add(ramo);
+                tarjeta.add(Box.createVerticalStrut(4));
+                tarjeta.add(fecha);
+                tarjeta.add(Box.createVerticalStrut(4));
+                tarjeta.add(horas);
+                tarjeta.add(Box.createVerticalStrut(8));
+                tarjeta.add(eliminar);
+
+                listPanel.add(tarjeta);
+                listPanel.add(Box.createVerticalStrut(12));
             }
         }
+
         revalidate();
         repaint();
     }
@@ -67,3 +103,4 @@ class EliminarRegistroPanel extends JPanel {
         }
     }
 }
+

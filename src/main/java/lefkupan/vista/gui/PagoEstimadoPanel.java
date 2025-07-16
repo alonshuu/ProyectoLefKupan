@@ -15,27 +15,46 @@ class PagoEstimadoPanel extends JPanel {
 
     private void init() {
         setLayout(new GridBagLayout());
-        setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
+        setBackground(Color.WHITE);
+        setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
+
         GridBagConstraints c = new GridBagConstraints();
-        c.insets = new Insets(5,5,5,5);
+        c.insets = new Insets(12, 0, 12, 0);
         c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.weightx = 1.0;
+
+
+        JLabel valorLabel = new JLabel("Valor por hora:");
+        valorLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        valorLabel.setForeground(Color.DARK_GRAY);
+        c.gridy = 0;
+        add(valorLabel, c);
+
 
         valorField = new JTextField(15);
-        GuiUtils.addPlaceholder(valorField, "Valor por hora");
+        valorField.setPreferredSize(new Dimension(200, 30));
+        GuiUtils.addPlaceholder(valorField, "Ej: 5000");
         valorField.getDocument().addDocumentListener((SimpleDocumentListener) e -> actualizar());
+        c.gridy = 1;
+        add(valorField, c);
 
-        resultado = new JLabel("$");
-        resultado.setForeground(new Color(0,128,0));
+
+        resultado = new JLabel("Pago estimado: $");
+        resultado.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        resultado.setForeground(new Color(0, 128, 0));
+        c.gridy = 2;
+        add(resultado, c);
 
 
         JButton volver = new JButton("Volver");
+        volver.setBackground(new Color(200, 200, 200));
+        volver.setForeground(Color.BLACK);
+        volver.setFocusPainted(false);
+        volver.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        volver.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
         volver.addActionListener(e -> app.mostrar("menu"));
-
-        c.gridy = 0;
-        add(valorField, c);
-        c.gridy = 1;
-        add(resultado, c);
-        c.gridy = 2;
+        c.gridy = 3;
         add(volver, c);
     }
 
@@ -43,9 +62,9 @@ class PagoEstimadoPanel extends JPanel {
         try {
             double valor = Double.parseDouble(valorField.getText());
             double pago = app.getAyudante().calcularPago(valor);
-            resultado.setText("$" + pago);
+            resultado.setText("Pago estimado: $" + pago);
         } catch (NumberFormatException ex) {
-            resultado.setText("$");
+            resultado.setText("Pago estimado: $");
         }
     }
 }

@@ -12,34 +12,45 @@ class MenuPanel extends JPanel {
     }
 
     private void init() {
-        setLayout(new GridLayout(8, 1, 10, 10));
-        setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setBackground(Color.WHITE);
+        setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 50));
 
-        JButton registrar = new JButton("Registrar horas trabajadas");
-        JButton pago = new JButton("Ver pago estimado");
-        JButton resumen = new JButton("Ver resumen de horas");
-        JButton historial = new JButton("Ver historial de pagos");
-        JButton ver = new JButton("Ver ayudantias registradas");
-        JButton eliminarReg = new JButton("Eliminar registro");
-        JButton eliminar = new JButton("Eliminar ayudantia");
-        JButton volver = new JButton("Volver");
+        String[] labels = {
+                "Registrar horas trabajadas",
+                "Ver pago estimado",
+                "Ver resumen de horas",
+                "Ver historial de pagos",
+                "Ver ayudantías registradas",
+                "Eliminar registro",
+                "Eliminar ayudantía",
+                "Cerrar sesión"
+        };
 
-        registrar.addActionListener(e -> app.mostrar("registrar"));
-        pago.addActionListener(e -> app.mostrar("pago"));
-        resumen.addActionListener(e -> app.mostrar("resumen"));
-        historial.addActionListener(e -> app.mostrar("historial"));
-        ver.addActionListener(e -> app.mostrar("ver"));
-        eliminarReg.addActionListener(e -> app.mostrar("eliminarRegistro"));
-        eliminar.addActionListener(e -> app.mostrar("eliminar"));
-        volver.addActionListener(e -> app.mostrar("login"));
+        String[] targets = {
+                "registrar", "pago", "resumen", "historial",
+                "ver", "eliminarRegistro", "eliminar", "login"
+        };
 
-        add(registrar);
-        add(pago);
-        add(resumen);
-        add(historial);
-        add(ver);
-        add(eliminarReg);
-        add(eliminar);
-        add(volver);
+        for (int i = 0; i < labels.length; i++) {
+            JButton button = crearBoton(labels[i]);
+            String destino = targets[i];
+            button.addActionListener(e -> app.mostrar(destino));
+            add(button);
+            add(Box.createVerticalStrut(12));
+        }
+    }
+
+    private JButton crearBoton(String texto) {
+        JButton boton = new JButton(texto);
+        boton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        boton.setMaximumSize(new Dimension(280, 40));
+        boton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        boton.setBackground(new Color(33, 150, 243));
+        boton.setForeground(Color.WHITE);
+        boton.setFocusPainted(false);
+        boton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        return boton;
     }
 }
+

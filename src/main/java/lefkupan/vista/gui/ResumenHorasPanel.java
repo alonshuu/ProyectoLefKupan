@@ -18,32 +18,64 @@ class ResumenHorasPanel extends JPanel {
     }
 
     private void init() {
-        setLayout(new BorderLayout(10,10));
-        setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
+        setLayout(new BorderLayout(15, 15));
+        setBackground(Color.WHITE);
+        setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
+
+        // Campo de valor por hora
+        JPanel top = new JPanel();
+        top.setLayout(new BoxLayout(top, BoxLayout.Y_AXIS));
+        top.setBackground(Color.WHITE);
+
+        JLabel valorLabel = new JLabel("Valor por hora:");
+        valorLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        valorLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         valorField = new JTextField(10);
-        GuiUtils.addPlaceholder(valorField, "Valor por hora");
+        GuiUtils.addPlaceholder(valorField, "Ej: 5000");
+        valorField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
         valorField.getDocument().addDocumentListener((SimpleDocumentListener) e -> actualizar());
-        JPanel top = new JPanel();
+
+        top.add(valorLabel);
+        top.add(Box.createVerticalStrut(5));
         top.add(valorField);
+        top.add(Box.createVerticalStrut(10));
+
         add(top, BorderLayout.NORTH);
 
+        // Lista de ayudantías
         listPanel = new JPanel();
         listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
+        listPanel.setBackground(Color.WHITE);
         JScrollPane scroll = new JScrollPane(listPanel);
+        scroll.setBorder(null);
         add(scroll, BorderLayout.CENTER);
 
+        // Pie de página con total y botón volver
         totalHorasLabel = new JLabel();
-        totalPagoLabel = new JLabel("$");
-        totalPagoLabel.setForeground(new Color(0,128,0));
+        totalPagoLabel = new JLabel("Pago estimado: $");
+        totalPagoLabel.setForeground(new Color(0, 128, 0));
+        totalPagoLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+
         JButton volver = new JButton("Volver");
+        volver.setBackground(new Color(200, 200, 200));
+        volver.setForeground(Color.BLACK);
+        volver.setFocusPainted(false);
+        volver.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        volver.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
+        volver.setAlignmentX(Component.LEFT_ALIGNMENT);
         volver.addActionListener(e -> app.mostrar("menu"));
 
         JPanel bottom = new JPanel();
         bottom.setLayout(new BoxLayout(bottom, BoxLayout.Y_AXIS));
+        bottom.setBackground(Color.WHITE);
+        bottom.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         bottom.add(totalHorasLabel);
+        bottom.add(Box.createVerticalStrut(5));
         bottom.add(totalPagoLabel);
+        bottom.add(Box.createVerticalStrut(10));
         bottom.add(volver);
+
         add(bottom, BorderLayout.SOUTH);
     }
 
@@ -57,14 +89,28 @@ class ResumenHorasPanel extends JPanel {
         listPanel.removeAll();
         for (Ayudantia a : app.getAyudante().getAyudantias()) {
             JPanel p = new JPanel();
-            p.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+            p.setBackground(new Color(245, 245, 245));
             p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
-            p.add(new JLabel("Ramo: " + a.getNombreRamo()));
-            p.add(new JLabel("Horas: " + a.getTotalHoras()));
-            a.getRegistrosHoras().forEach(r -> p.add(new JLabel(r.toString())));
+            p.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(new Color(210, 210, 210)),
+                    BorderFactory.createEmptyBorder(10, 10, 10, 10)
+            ));
+
+            p.add(new JLabel("📘 Ramo: " + a.getNombreRamo()));
+            p.add(Box.createVerticalStrut(3));
+            p.add(new JLabel("⏱ Horas: " + a.getTotalHoras()));
+            p.add(Box.createVerticalStrut(5));
+            a.getRegistrosHoras().forEach(r -> {
+                JLabel registroLabel = new JLabel("• " + r.toString());
+                registroLabel.setFont(new Font("Segoe UI", Font.ITALIC, 12));
+                p.add(registroLabel);
+            });
+
             listPanel.add(p);
+            listPanel.add(Box.createVerticalStrut(10));
         }
-        totalHorasLabel.setText("Total horas: " + app.getAyudante().getHorasTrabajadas());
+
+        totalHorasLabel.setText("Total de horas trabajadas: " + app.getAyudante().getHorasTrabajadas());
         actualizar();
         revalidate();
         repaint();

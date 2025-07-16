@@ -15,17 +15,32 @@ class EliminarAyudantiaPanel extends JPanel {
     }
 
     private void init() {
-        setLayout(new BorderLayout(10, 10));
-        setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
+        setLayout(new BorderLayout(15, 15));
+        setBackground(Color.WHITE);
+        setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
+
         listPanel = new JPanel();
         listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
-        JScrollPane scroll = new JScrollPane(listPanel);
+        listPanel.setBackground(Color.WHITE);
 
+        JScrollPane scroll = new JScrollPane(listPanel);
+        scroll.setBorder(null);
+        add(scroll, BorderLayout.CENTER);
+
+        // Botón volver
         JButton volver = new JButton("Volver");
+        volver.setBackground(new Color(200, 200, 200));
+        volver.setForeground(Color.BLACK);
+        volver.setFocusPainted(false);
+        volver.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        volver.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
         volver.addActionListener(e -> app.mostrar("menu"));
 
-        add(scroll, BorderLayout.CENTER);
-        add(volver, BorderLayout.SOUTH);
+        JPanel bottom = new JPanel();
+        bottom.setLayout(new BoxLayout(bottom, BoxLayout.Y_AXIS));
+        bottom.setBackground(Color.WHITE);
+        bottom.add(volver);
+        add(bottom, BorderLayout.SOUTH);
     }
 
     @Override
@@ -37,16 +52,35 @@ class EliminarAyudantiaPanel extends JPanel {
     private void refrescar() {
         listPanel.removeAll();
         app.getAyudante().getAyudantias().forEach(a -> {
-            JPanel p = new JPanel();
-            p.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-            p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
-            p.add(new JLabel("Nombre del ramo: " + a.getNombreRamo()));
-            p.add(new JLabel("Horas trabajadas: " + a.getTotalHoras()));
-            JButton eliminar = new JButton("Eliminar");
+            JPanel tarjeta = new JPanel();
+            tarjeta.setLayout(new BoxLayout(tarjeta, BoxLayout.Y_AXIS));
+            tarjeta.setBackground(new Color(245, 245, 245));
+            tarjeta.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(new Color(210, 210, 210)),
+                    BorderFactory.createEmptyBorder(10, 10, 10, 10)
+            ));
+
+            JLabel ramo = new JLabel("📘 Nombre del ramo: " + a.getNombreRamo());
+            JLabel horas = new JLabel("⏱ Horas trabajadas: " + a.getTotalHoras());
+
+            JButton eliminar = new JButton("Eliminar ayudantía");
+            eliminar.setBackground(new Color(244, 67, 54)); // Rojo suave
+            eliminar.setForeground(Color.WHITE);
+            eliminar.setFocusPainted(false);
+            eliminar.setFont(new Font("Segoe UI", Font.BOLD, 13));
+            eliminar.setBorder(BorderFactory.createEmptyBorder(6, 16, 6, 16));
             eliminar.addActionListener(e -> eliminarAyudantia(a.getNombreRamo()));
-            p.add(eliminar);
-            listPanel.add(p);
+
+            tarjeta.add(ramo);
+            tarjeta.add(Box.createVerticalStrut(5));
+            tarjeta.add(horas);
+            tarjeta.add(Box.createVerticalStrut(10));
+            tarjeta.add(eliminar);
+
+            listPanel.add(tarjeta);
+            listPanel.add(Box.createVerticalStrut(12));
         });
+
         revalidate();
         repaint();
     }
@@ -55,10 +89,10 @@ class EliminarAyudantiaPanel extends JPanel {
         boolean ok = app.getAyudante().eliminarAyudantia(ramo);
         if (ok) {
             HistorialTxt.eliminarAyudantiaDelArchivo(app.getAyudante(), ramo);
-            JOptionPane.showMessageDialog(this, "Ayudantia eliminada");
+            JOptionPane.showMessageDialog(this, "Ayudantía eliminada");
             refrescar();
         } else {
-            JOptionPane.showMessageDialog(this, "No se encontró ayudantia", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "No se encontró ayudantía", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }
