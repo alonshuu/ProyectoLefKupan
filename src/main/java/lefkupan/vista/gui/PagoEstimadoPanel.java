@@ -15,6 +15,7 @@ class PagoEstimadoPanel extends JPanel {
 
     private void init() {
         setLayout(new GridBagLayout());
+        setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
         GridBagConstraints c = new GridBagConstraints();
         c.insets = new Insets(5,5,5,5);
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -24,6 +25,8 @@ class PagoEstimadoPanel extends JPanel {
         valorField.getDocument().addDocumentListener((SimpleDocumentListener) e -> actualizar());
 
         resultado = new JLabel("$");
+        resultado.setForeground(new Color(0,128,0));
+
 
         JButton volver = new JButton("Volver");
         volver.addActionListener(e -> app.mostrar("menu"));

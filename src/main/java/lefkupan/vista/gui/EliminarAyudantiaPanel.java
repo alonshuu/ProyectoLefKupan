@@ -16,6 +16,7 @@ class EliminarAyudantiaPanel extends JPanel {
 
     private void init() {
         setLayout(new BorderLayout(10, 10));
+        setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
         listPanel = new JPanel();
         listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
         JScrollPane scroll = new JScrollPane(listPanel);

@@ -6,7 +6,7 @@ import java.awt.*;
 class LoginPanel extends JPanel {
     private final AppGUI app;
     private JTextField matriculaField;
-    private JTextField passField;
+    private JPasswordField passField;
 
     LoginPanel(AppGUI app) {
         this.app = app;
@@ -20,12 +20,12 @@ class LoginPanel extends JPanel {
         c.fill = GridBagConstraints.HORIZONTAL;
 
         matriculaField = new JTextField(15);
-        passField = new JTextField(15);
-        GuiUtils.addPlaceholder(matriculaField, "Ingrese su matricula");
-        GuiUtils.addPlaceholder(passField, "Ingrese su contraseña");
+        passField = new JPasswordField(15);
+        GuiUtils.addPlaceholder(matriculaField, "Ingresa tu matrícula");
+        GuiUtils.addPlaceholder(passField, "Ingresa tu contraseña");
 
         JButton login = new JButton("Ingresar");
-        login.addActionListener(e -> app.login(matriculaField.getText(), passField.getText()));
+        login.addActionListener(e -> app.login(matriculaField.getText(), new String(passField.getPassword())));
 
         c.gridy = 0;
         add(matriculaField, c);

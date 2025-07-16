@@ -15,6 +15,7 @@ class RegistrarHorasPanel extends JPanel {
 
     private void init() {
         setLayout(new GridBagLayout());
+        setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
         GridBagConstraints c = new GridBagConstraints();
         c.insets = new Insets(5,5,5,5);
         c.fill = GridBagConstraints.HORIZONTAL;

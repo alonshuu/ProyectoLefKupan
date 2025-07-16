@@ -31,8 +31,11 @@ public class AppGUI extends JFrame {
         container.add(new MenuPanel(this), "menu");
         container.add(new RegistrarHorasPanel(this), "registrar");
         container.add(new PagoEstimadoPanel(this), "pago");
+        container.add(new ResumenHorasPanel(this), "resumen");
+        container.add(new HistorialPagosPanel(this), "historial");
         container.add(new VerAyudantiasPanel(this), "ver");
         container.add(new EliminarAyudantiaPanel(this), "eliminar");
+        container.add(new EliminarRegistroPanel(this), "eliminarRegistro");
 
         add(container);
         mostrar("login");
