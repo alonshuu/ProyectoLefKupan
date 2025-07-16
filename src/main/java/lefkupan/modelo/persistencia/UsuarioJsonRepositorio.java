@@ -61,7 +61,7 @@ public class UsuarioJsonRepositorio { //repositorio para cargar y guardar usuari
             if (u.get("matricula").equals(matricula) && u.get("contrasena").equals(contrasena)) {
                 String rol = u.get("rol");
                 if ("ADMINISTRADOR".equalsIgnoreCase(rol)) {
-                    return new Administrador(matricula);
+                    return new Administrador(matricula, contrasena);
                 } else {
                     Ayudante ayudantia = new Ayudante(matricula, contrasena);
                     HistorialJson.cargarHistorial(ayudantia);

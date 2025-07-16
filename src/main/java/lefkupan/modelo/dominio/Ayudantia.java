@@ -43,9 +43,7 @@ public class Ayudantia{ //clase que representa una ayudantía con múltiples reg
     }
 
     public double getTotalHoras() { //obtiene el total de horas registradas en esta ayudantia
-        return registrosHoras.stream()
-                .mapToDouble(RegistroHoras::getCantidad).
-                sum();
+        return getTotalHoras();
     }
 
     public String getNombreRamo(){

@@ -8,14 +8,20 @@ import java.nio.file.StandardOpenOption;
 import java.util.List;
 
 public class Administrador { //representa a un administrador del sistema, tiene permisos para registrar usuarios y revisar los historiales
-    private final String id;
+    private final String matricula;
+    private final String contrasena;
 
-    public Administrador(String id) {
-        this.id = id;
+    public Administrador(String matricula, String contrasena) {
+        this.matricula = matricula;
+        this.contrasena = contrasena;
     }
 
-    public String getId() {
-        return id;
+    public String getMatricula() {
+        return matricula;
+    }
+
+    public String getContrasena() {
+        return contrasena;
     }
 
     public void registrarNuevoUsuario(String matricula, String contrasena, RolUsuario rol) { //registra un nuevo usuario en el archivo usuario.txt
