@@ -1,55 +1,85 @@
 package lefkupan.controlador;
 
-import lefkupan.modelo.Ayudante;
-import lefkupan.modelo.HistorialTxt;
-import lefkupan.modelo.Ayudantia;
-import lefkupan.modelo.RegistroHoras;
+import lefkupan.modelo.*;
 
-public class ControladorHoras {
-    private Ayudante ayudante;
+import java.time.LocalDate;
+import java.util.List;
+
+public class ControladorHoras { //maneja el registro y consulta de horas para un ayudante
+    private final Ayudante ayudante;
 
     public ControladorHoras(Ayudante ayudante) {
         this.ayudante = ayudante;
     }
 
-    public void registrarHoras(String ramo, double cantidad) {
-        try {
-            ayudante.registrarHoras(ramo, cantidad);
-            HistorialTxt.guardarRegistro(ayudante, ramo, cantidad);
-            System.out.println("Horas registradas correctamente");
-        } catch (IllegalArgumentException e) {
-            System.out.println("Error: " + e.getMessage());
+    public Ayudante getAyudante() {
+        return ayudante;
+    }
+
+    public void registrarHoras(String nombreRamo, LocalDate fecha, double horas, TipoActividad tipoActividad) { //registra horas trabajadas en una ayudantia especifica
+       Ayudantia ayudantia = buscarOcrearAyudantia(nombreRamo);
+       ayudantia.agregarHoras(fecha, horas, tipoActividad);
+
+       RegistroHoras registro = new RegistroHoras(fecha, horas, tipoActividad);
+       HistorialTxt.guardarRegistro(ayudante,nombreRamo, registro);
+    }
+
+    public boolean eliminarAyudantia(String nombreRamo) {
+        boolean eliminada = ayudante.eliminarAyudantia(nombreRamo);
+        if (eliminada) {
+            HistorialTxt.eliminarAyudantiaDelArchivo(ayudante, nombreRamo);
         }
+        return eliminada;
     }
 
-    public void mostrarResumen(double valorPorHora) {
-        mostrarEncabezadoResumen();
-        mostrarDetalleAyudantias();
-        mostrarTotales(valorPorHora);
+    public boolean eliminarRegistroEspecifico(String nombreRamo, RegistroHoras registro) {
+        for (Ayudantia a : ayudante.getAyudantias()) {
+            if (a.getNombreRamo().equals(nombreRamo)) {
+                boolean ok = a.eliminarRegistro(registro.getFecha(), registro.getCantidad());
+                if (ok) {
+                    HistorialTxt.eliminarAyudantiaDelArchivo(ayudante, nombreRamo, registro);
+                }
+                return ok;
+            }
+        }
+        return false;
     }
 
-    private void mostrarEncabezadoResumen() {
-        System.out.println("==================================");
-        System.out.println("        RESUMEN DE HORAS          ");
-        System.out.println("==================================");
+    public void mostrarEncabezadoResumen() {
+        System.out.printf("\nResumen del ayudante %s:\n", ayudante.getMatricula());
+        System.out.printf("Total horas trabajadas: %.2f\n", ayudante.getHorasTotales());
     }
 
-    private void mostrarDetalleAyudantias() {
-        for (Ayudantia ayudantia : ayudante.getAyudantias()) {
-            System.out.println("Ramo: " + ayudantia.getNombreRamo());
-            for (RegistroHoras registro : ayudantia.getRegistrosHoras()) {
-                System.out.println("  - " + registro);
+    public void mostrarDetalleAyudantias() {
+        List<Ayudantia> lista = ayudante.getAyudantias();
+        if (lista.isEmpty()) {
+            System.out.println("No hay ayudantias registradas");
+            return;
+        }
+
+        for (Ayudantia a : lista) {
+            System.out.println("\n" + a);
+            for (RegistroHoras rh : a.getRegistrosHoras()) {
+                System.out.println(" - " + rh);
             }
         }
     }
 
-    private void mostrarTotales(double valorPorHora) {
-        System.out.println("----------------------------------");
-        System.out.println("Total de horas trabajadas: " + ayudante.getHorasTrabajadas());
-        System.out.println("Pago total estimado: $" + ayudante.calcularPago(valorPorHora));
+    public void mostrarTotales(double valorHora) {
+        double totalHoras = ayudante.getHorasTotales();
+        double totalPago = ayudante.calcularPago(valorHora);
+
+        System.out.printf("\nTotal de Horas: %.2f | Pago estimado: $%.0f\n", totalHoras, totalPago);
     }
 
-    public Ayudante getAyudante() {
-        return ayudante;
+    private Ayudantia buscarOcrearAyudantia(String nombreRamo) {
+        for (Ayudantia a : ayudante.getAyudantias()) {
+            if (a.getNombreRamo().equalsIgnoreCase(nombreRamo)) {
+                return a;
+            }
+        }
+        Ayudantia nueva = new Ayudantia(nombreRamo);
+        ayudante.agregarAyudantia(nueva);
+        return nueva;
     }
 }
