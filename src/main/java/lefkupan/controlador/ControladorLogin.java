@@ -1,46 +1,45 @@
 package lefkupan.controlador;
 
 import lefkupan.modelo.Ayudante;
+import lefkupan.modelo.HistorialTxt;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Scanner;
 
-public class ControladorLogin {
+public class ControladorLogin { //encargada de autenticar a los usuarios a partir del archivo usuarios.txt
+    private static final String ARCHIVO_USUARIOS = "src/main/resources/usuarios.txt";
+
     public static Ayudante autenticar(String matricula, String contrasena) {
-        BufferedReader lector = obtenerLectorUsuarios();
-        if (lector == null) return null;
+        try(Scanner scanner = obtenerLectorUsuarios()) {
+            while(scanner.hasNextLine()) {
+                String linea = scanner.nextLine().trim();
+                String[] partes = linea.split(";");
 
-        try {
-            String linea;
-            while ((linea = lector.readLine()) != null) {
-                if (credencialesValidas(linea, matricula, contrasena)) {
-                    return new Ayudante(matricula, contrasena);
+                if(partes.length !=2) continue;
+
+                String matriculaGuardada = partes[0];
+                String contrasenaGuardada = partes[1];
+
+                if(matriculaGuardada.equals(matricula) && contrasenaGuardada.equals(contrasena)) {
+                    Ayudante a = new Ayudante(matricula, contrasena);
+                    HistorialTxt.cargarHistorial(a);
+                    return a;
                 }
             }
         } catch (IOException e) {
-            System.out.println("Error leyendo usuarios: " + e.getMessage());
+            System.out.println("Error al leer el archivo" + e.getMessage());
         }
         return null;
     }
 
-    private static BufferedReader obtenerLectorUsuarios() {
-        InputStream entrada = ControladorLogin.class.getClassLoader().getResourceAsStream("usuarios.txt");
-
-        if (entrada == null) {
-            System.out.println("Archivo 'usuarios.txt' no encontrado.");
-            return null;
+    private static Scanner obtenerLectorUsuarios() throws IOException {
+        Path archivo = Path.of(ARCHIVO_USUARIOS);
+        if (!Files.exists(archivo)) {
+            throw new FileNotFoundException("Archivo de usuarios no encontrado");
         }
-
-        return new BufferedReader(new InputStreamReader(entrada));
-    }
-
-    private static boolean credencialesValidas(String linea, String matricula, String contrasena) {
-        String[] partes = linea.split(";");
-        return partes.length == 2 &&
-                partes[0].trim().equals(matricula) &&
-                partes[1].trim().equals(contrasena);
+        return new Scanner(Files.newBufferedReader(archivo));
     }
 }
 
