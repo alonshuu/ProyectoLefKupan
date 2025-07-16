@@ -67,8 +67,7 @@ public class HistorialJson { //encargada de leer y guardar los historiales de ho
                 System.out.println("Historial guardado con exito");
             }
         } catch (IOException e) {
-            System.err.println("Error al guardar historial JSON: " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("Error al guardar historial: " + e.getMessage());
         }
     }
 
