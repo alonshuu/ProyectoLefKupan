@@ -8,7 +8,7 @@ public class ControladorLoginTest {
 
     @Test
     public void autenticarCredencialesValidas() {
-        Ayudante a = ControladorLogin.autenticar("21645082523", "1234");
+        Ayudante a = ControladorLogin.autenticar("21645082523", "12345");
         assertNotNull(a);
         assertEquals("21645082523", a.getMatricula());
     }
